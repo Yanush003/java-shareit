@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepositoryImpl repository;
 
     public UserDto create(UserDto userDto) {
-        if (userDto.getEmail()==null){
+        if (userDto.getEmail() == null) {
             throw new ValidateEmailException("");
         }
         User user = UserMapper.toUser(userDto);

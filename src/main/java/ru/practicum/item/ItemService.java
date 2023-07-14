@@ -24,8 +24,7 @@ public class ItemService {
         if (item.getName() == null
                 || item.getName().isEmpty()
                 || item.getDescription() == null
-                || item.getAvailable() == null)
-        {
+                || item.getAvailable() == null) {
             throw new ValidateEmailException("");
         }
         User user = userRepository.get(userId);
@@ -38,7 +37,7 @@ public class ItemService {
         return itemRepository.update(userId, itemId, item);
     }
 
-    public List<Item> search(Long userId,String text) {
+    public List<Item> search(Long userId, String text) {
         return itemRepository.search(userId, text);
     }
 
