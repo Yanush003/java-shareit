@@ -10,15 +10,15 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @GetMapping("/{itemId}")
-    public Item get(@PathVariable("itemId") Long itemId) {
-        return itemService.get(itemId);
-    }
-
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
                     @RequestBody ItemDto itemDto) {
         return itemService.add(userId, itemDto);
+    }
+
+    @GetMapping("/{itemId}")
+    public Item get(@PathVariable("itemId") Long itemId) {
+        return itemService.get(itemId);
     }
 
     @PatchMapping("/{itemId}")
