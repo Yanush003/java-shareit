@@ -4,15 +4,12 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.exception.DuplicateEmailException;
 import ru.practicum.exception.NotFoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Long, User> users = new HashMap<>();
-
     private static Long id = 1L;
 
     @Override
@@ -45,9 +42,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
             oldUser.setEmail(user.getEmail());
         }
-
         return users.put(oldUser.getId(), oldUser);
-
     }
 
     @Override
@@ -57,7 +52,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        return users.values().stream().toList();
+        return new ArrayList<>(users.values());
     }
 
     private Optional<User> searchUserByEmail(String email, Long userId) {
@@ -69,7 +64,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private boolean validateEmail(User user) {
-        List<User> userList = users.values().stream().filter(x -> x.getEmail().equals(user.getEmail())).toList();
+        List<User> userList = users
+                .values()
+                .stream()
+                .filter(x -> x.getEmail().equals(user.getEmail()))
+                .collect(Collectors.toList());
         return userList.size() > 0;
     }
 }

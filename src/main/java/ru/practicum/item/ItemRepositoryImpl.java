@@ -7,6 +7,7 @@ import ru.practicum.user.User;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .stream()
                 .flatMap(Collection::stream)
                 .filter(item -> item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.getAvailable().equals(true))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public List<Item> getAll(Long userId) {
