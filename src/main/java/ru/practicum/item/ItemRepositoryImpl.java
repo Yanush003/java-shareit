@@ -44,7 +44,7 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new NotFoundException("Передан пустой аргумент!");
         }
         Optional<Item> first = itemsUser.stream().filter(x -> x.getId().equals(itemId)).findFirst();
-        if (first.isEmpty()){
+        if (first.isEmpty()) {
             throw new NotFoundException("");
         }
         Item itemInList = first.get();
@@ -57,9 +57,12 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (item.getAvailable() != null) {
             itemInList.setAvailable(item.getAvailable());
         }
-        itemsUser.remove(itemsUser.stream().filter(x -> x.getId().equals(itemId)).findFirst().get());
-        itemsUser.add(itemInList);
-        items.put(userId, itemsUser);
+        Optional<Item> optionalItem = itemsUser.stream().filter(x -> x.getId().equals(itemId)).findFirst();
+        if (optionalItem.isPresent()) {
+            itemsUser.remove(optionalItem.get());
+            itemsUser.add(itemInList);
+            items.put(userId, itemsUser);
+        }
         return itemInList;
     }
 
