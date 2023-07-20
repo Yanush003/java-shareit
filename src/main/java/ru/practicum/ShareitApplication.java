@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ShareltApplication {
+public class ShareitApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShareltApplication.class, args);
+		SpringApplication.run(ShareitApplication.class, args);
 	}
 
 }
