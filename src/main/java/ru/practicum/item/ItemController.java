@@ -18,7 +18,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                    @RequestBody ItemDto itemDto) {
+                          @RequestBody ItemDto itemDto) {
         return itemService.add(userId, itemDto);
     }
 
@@ -36,7 +36,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId){
+    public List<Item> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAll(userId);
     }
 }

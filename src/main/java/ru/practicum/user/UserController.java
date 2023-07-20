@@ -5,8 +5,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -28,7 +26,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserDto update(@PathVariable (name = "id") Long id, @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable(name = "id") Long id, @RequestBody UserDto userDto) {
         return userService.update(id, userDto);
     }
 
