@@ -3,6 +3,8 @@ package ru.practicum.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.annotation.HandlesTypes;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -11,15 +13,15 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
-    @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @RequestBody ItemDto itemDto) {
-        return itemService.add(userId, itemDto);
-    }
-
     @GetMapping("/{itemId}")
     public Item get(@PathVariable("itemId") Long itemId) {
         return itemService.get(itemId);
+    }
+
+    @PostMapping
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
+                    @RequestBody ItemDto itemDto) {
+        return itemService.add(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")
@@ -36,7 +38,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<Item> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<Item> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId){
         return itemService.getAll(userId);
     }
 }

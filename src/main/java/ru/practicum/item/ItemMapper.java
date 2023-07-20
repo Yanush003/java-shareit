@@ -1,27 +1,30 @@
 package ru.practicum.item;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.request.ItemRequest;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
     public static ItemDto toItemDto(Item item) {
         return ItemDto.builder()
-                .id((item.getId() == null) ? null : item.getId())
-                .name((item.getName() == null) ? null : item.getName())
-                .description((item.getDescription() == null) ? null : item.getDescription())
-                .available((item.getAvailable() == null) ? null : item.getAvailable())
-                .owner((item.getOwner() == null) ? null : item.getOwner())
-                .request(ItemRequest.builder().id((item.getRequest() == null) ? null : item.getRequest().getId()).build())
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .owner(item.getOwner())
+                .request(ItemRequest.builder().id(item.getRequest() != null ? item.getRequest().getId() : null).build())
                 .build();
     }
 
     public static Item toItem(ItemDto itemDto) {
         return Item.builder()
-                .id((itemDto.getId() == null) ? null : itemDto.getId())
-                .name((itemDto.getName() == null) ? null : itemDto.getName())
-                .description((itemDto.getDescription() == null) ? null : itemDto.getDescription())
-                .available((itemDto.getAvailable() == null) ? null : itemDto.getAvailable())
-                .owner((itemDto.getOwner() == null) ? null : itemDto.getOwner())
-                .request(ItemRequest.builder().id((itemDto.getRequest() == null) ? null : itemDto.getRequest().getId()).build())
+                .id(itemDto.getId())
+                .name(itemDto.getName())
+                .description(itemDto.getDescription())
+                .available(itemDto.getAvailable())
+                .owner(itemDto.getOwner())
+                .request(ItemRequest.builder().id(itemDto.getRequest() != null ? itemDto.getRequest().getId() : null).build())
                 .build();
     }
 }

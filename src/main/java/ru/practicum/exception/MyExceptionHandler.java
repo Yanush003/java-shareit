@@ -10,17 +10,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class MyExceptionHandler {
     @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<?> handlerDuplicateEmailException(DuplicateEmailException ex) {
+    public ResponseEntity <?> handlerDuplicateEmailException(DuplicateEmailException ex){
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
     }
 
     @ExceptionHandler(ValidateEmailException.class)
-    public ResponseEntity<?> handlerIllegalArgumentException(ValidateEmailException ex) {
+    public ResponseEntity <?> handlerIllegalArgumentException(ValidateEmailException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handlerIllegalArgumentException(NotFoundException ex) {
+    public ResponseEntity <?> handlerIllegalArgumentException(NotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
     }
 }

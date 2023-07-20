@@ -12,5 +12,4 @@ interface UserRepository {
     void remove(Long userId);
 
     List<User> findAll();
-
 }

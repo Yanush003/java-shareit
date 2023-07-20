@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.request.ItemRequest;
 import ru.practicum.user.User;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class Item {
 
     private Long id;
-    @NotNull
+    @NotBlank
     private String name;
     private String description;
     private Boolean available; //— статус о том, доступна или нет вещь для аренды; Статус должен проставлять владелец.
