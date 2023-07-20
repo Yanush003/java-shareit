@@ -3,8 +3,6 @@ package ru.practicum.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.annotation.HandlesTypes;
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

@@ -3,12 +3,11 @@ package ru.practicum.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidateEmailException;
 import ru.practicum.user.User;
-import ru.practicum.user.UserRepositoryImpl;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,7 +15,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     Map<Long, List<Item>> items = new HashMap<>();
 
-    private AtomicLong idCounter = new AtomicLong();
+    private final AtomicLong idCounter = new AtomicLong();
 
     @Override
     public Item get(Long itemId) {
@@ -69,12 +68,11 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        List<Item> collect = items.values()
+        return items.values()
                 .stream()
                 .flatMap(Collection::stream)
                 .filter(item -> item.getDescription().toLowerCase().contains(text.toLowerCase()) && item.getAvailable().equals(true))
-                .toList();
-        return collect;
+                .collect(Collectors.toList());
     }
 
     public List<Item> getAll(Long userId) {
