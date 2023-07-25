@@ -39,4 +39,9 @@ public class ItemController {
     public List<Item> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAll(userId);
     }
+
+    @PostMapping("/{itemId}/comment")
+    public Item createComment (@PathVariable("itemId") Long itemId, String comment){
+       return  null;
+    }
 }

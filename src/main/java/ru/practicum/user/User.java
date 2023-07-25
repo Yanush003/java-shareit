@@ -5,6 +5,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
@@ -12,12 +16,16 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name="users")
 public class User {
-
-    private Long id; // — уникальный идентификатор пользователя;
+    @Column(name = "id")
+    @Id
+    private Long id;
     @NotBlank
-    private String name; // — имя или логин пользователя;
+    @Column(name = "name")
+    private String name;
     @Email
-    private String email; // — адрес электронной почты (учтите, что два пользователя не могут
-    //иметь одинаковый адрес электронной почты).
+    @Column(name = "email")
+    private String email;
 }
