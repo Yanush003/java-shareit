@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 @RequiredArgsConstructor
 public class BookingRepositoryImpl implements BookingRepository {
-    public BookingDto create(Long userId, ItemDto itemDto) {
+    public BookingDto add(Long userId, ItemDto itemDto) {
         return null;
     }
 

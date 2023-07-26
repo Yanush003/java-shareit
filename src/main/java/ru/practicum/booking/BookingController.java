@@ -14,7 +14,7 @@ public class BookingController {
     BookingService bookingService;
 
     @PostMapping
-    public BookingDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public BookingDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
                              @RequestBody ItemDto itemDto) {
         return null;
     }
@@ -27,8 +27,8 @@ public class BookingController {
     }
 
     @GetMapping("/{bookingId}")
-    public Item get(@PathVariable("bookingId") Long bookingId) {
-        return null;
+    public Booking get(@PathVariable("bookingId") Long bookingId, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        return bookingService.getByUserId(userId, bookingId);
     }
 
     @GetMapping("?state={state}")

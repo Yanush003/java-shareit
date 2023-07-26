@@ -27,11 +27,11 @@ public class Item {
     private String description;
     @Column(name = "available")
     private Boolean available; //— статус о том, доступна или нет вещь для аренды; Статус должен проставлять владелец.
-    @Transient
     @ManyToOne
+    @JoinColumn(name = "owner_id")
     private User owner; //— владелец вещи;
-    @Transient
     @OneToOne
+    @JoinColumn(name = "request_id")
     private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом
     // поле будет храниться ссылка на соответствующий запрос
 }

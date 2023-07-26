@@ -13,4 +13,15 @@ public class BookingMapper {
 
     }
 
+    public static Booking toBooking(BookingDto bookingDto) {
+        return Booking.builder()
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .item(bookingDto.getItem())
+                .booker(bookingDto.getBooker())
+                .status(bookingDto.getStatus())
+                .build();
+
+    }
+
 }

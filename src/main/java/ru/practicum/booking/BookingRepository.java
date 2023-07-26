@@ -6,7 +6,7 @@ import ru.practicum.item.ItemDto;
 import java.util.List;
 
 public interface BookingRepository {
-    BookingDto create(Long userId, ItemDto itemDto);
+    BookingDto add(Long userId, ItemDto itemDto);
 
     Item update(Long userId, Long bookingId, ItemDto itemDto, Boolean approved);
 

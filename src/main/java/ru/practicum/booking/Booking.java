@@ -8,6 +8,8 @@ import ru.practicum.item.Item;
 import ru.practicum.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -21,13 +23,14 @@ public class Booking {
     @Id
     private Long id; // — уникальный идентификатор бронирования;
     @Column(name = "start_date")
-    private Date start; // — дата и время начала бронирования;
+    private LocalDateTime start; // — дата и время начала бронирования;
     @Column(name = "end_date")
-    private Date end; // — дата и время конца бронирования;
-    @Transient
+    private LocalDateTime end; // — дата и время конца бронирования;
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "item_id")
     private Item item; // — вещь, которую пользователь бронирует;
-    @Transient
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
+    @JoinColumn(name = "booker_id")
     private User booker; // — пользователь, который осуществляет бронирование;
     @Enumerated(EnumType.STRING)
     private Status status; // — статус бронирования. Может принимать одно из следующих

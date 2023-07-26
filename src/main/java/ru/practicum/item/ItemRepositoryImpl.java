@@ -2,6 +2,7 @@ package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.User;
 
@@ -83,5 +84,9 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new NotFoundException("");
         }
         return items.get(userId);
+    }
+
+    public Item createComment (Long itemId, String comment){
+        return  null;
     }
 }
