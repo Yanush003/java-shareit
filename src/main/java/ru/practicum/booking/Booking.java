@@ -33,6 +33,7 @@ public class Booking {
     @JoinColumn(name = "booker_id")
     private User booker; // — пользователь, который осуществляет бронирование;
     @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private Status status; // — статус бронирования. Может принимать одно из следующих
     // значений: WAITING, APPROVED, REJECTED, CANCELED. (пока сделала Enum Status)
 

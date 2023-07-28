@@ -2,12 +2,11 @@ package ru.practicum.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.DuplicateEmailException;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidateEmailException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,9 +19,6 @@ public class UserService {
             throw new ValidateEmailException("");
         }
         User user = UserMapper.toUser(userDto);
-        if (validateEmail(user)) {
-            throw new DuplicateEmailException(user.getEmail());
-        }
         User user1 = repository.save(user);
         return UserMapper.toUserDto(user1);
     }
@@ -32,9 +28,17 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not exist"));
     }
 
+    @Transactional
     public UserDto update(Long id, UserDto userDto) {
         userDto.setId(id);
-        User user = UserMapper.toUser(userDto);
+        User user = repository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not exist"));
+
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
         User update = repository.save(user);
         return UserMapper.toUserDto(update);
     }
