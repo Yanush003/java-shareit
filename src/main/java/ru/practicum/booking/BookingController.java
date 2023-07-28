@@ -15,15 +15,15 @@ public class BookingController {
 
     @PostMapping
     public BookingDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
-                             @RequestBody ItemDto itemDto) {
-        return null;
+                             @RequestBody BookingDto bookingDto) {
+        return bookingService.add(userId,bookingDto);
     }
 
     @PatchMapping("/{bookingId}?approved={approved}")
     public Item update(@RequestHeader("X-Sharer-User-Id") Long userId,
                        @PathVariable("bookingId") Long bookingId,
                        @RequestBody ItemDto itemDto, @PathVariable Boolean approved) {
-        return null;
+        return bookingService.update(userId, bookingId,itemDto,approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -33,11 +33,11 @@ public class BookingController {
 
     @GetMapping("?state={state}")
     public List<Booking> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable String state) {
-        return null;
+        return bookingService.getAllBooking(userId,state);
     }
 
     @GetMapping("owner?state={state}")
     public List<Booking> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable String state) {
-        return null;
+        return bookingService.getOwnerBooking(userId, state);
     }
 }

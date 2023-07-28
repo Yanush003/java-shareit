@@ -2,6 +2,7 @@ package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.exception.NotAllowedException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidateEmailException;
 import ru.practicum.user.UserService;
@@ -25,18 +26,15 @@ public class ItemService {
     public ItemDto add(Long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userService.get(userId));
-        if (item.getName() == null
-                || item.getName().isEmpty()
-                || item.getDescription() == null
-                || item.getAvailable() == null) {
-            throw new ValidateEmailException("");
-        }
         Item item1 = itemRepository.save(item);
         return ItemMapper.toItemDto(item1);
     }
 
     public Item update(Long userId, Long itemId, ItemDto itemDto) {
         Item item = get(itemId);
+        if(!item.getOwner().getId().equals(userId)){
+            throw new NotAllowedException("");
+        }
         if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }

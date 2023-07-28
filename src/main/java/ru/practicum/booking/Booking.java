@@ -19,6 +19,7 @@ import java.util.Date;
 @Entity
 @Table(name = "bookings")
 public class Booking {
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id")
     @Id
     private Long id; // — уникальный идентификатор бронирования;

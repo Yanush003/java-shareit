@@ -9,6 +9,7 @@ import ru.practicum.user.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
@@ -17,16 +18,20 @@ import javax.validation.constraints.NotBlank;
 @Entity
 @Table(name="items")
 public class Item {
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id")
     @Id
     private Long id;
     @NotBlank
     @Column(name = "name")
     private String name;
+    @NotBlank
     @Column (name = "description")
     private String description;
+    @NotNull
     @Column(name = "available")
     private Boolean available; //— статус о том, доступна или нет вещь для аренды; Статус должен проставлять владелец.
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner; //— владелец вещи;
