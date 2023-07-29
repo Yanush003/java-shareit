@@ -2,9 +2,8 @@ package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.item.Item;
-import ru.practicum.item.ItemDto;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -15,14 +14,14 @@ public class BookingController {
 
     @PostMapping
     public BookingDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @RequestBody BookingPostDto bookingDto) {
+                          @RequestBody @Valid BookingPostDto bookingDto) {
         return bookingService.add(userId, bookingDto);
     }
 
-    @PatchMapping("/{bookingId}?approved={approved}")
-    public Item update(@RequestHeader("X-Sharer-User-Id") Long userId,
-                       @PathVariable("bookingId") Long bookingId,
-                       @PathVariable Boolean approved) {
+    @PatchMapping("/{bookingId}")
+    public Booking update(@RequestHeader("X-Sharer-User-Id") Long userId,
+                          @PathVariable("bookingId") Long bookingId,
+                          @RequestParam Boolean approved) {
         return bookingService.update(userId, bookingId, approved);
     }
 
@@ -31,13 +30,15 @@ public class BookingController {
         return bookingService.getByUserId(userId, bookingId);
     }
 
-    @GetMapping("?state={state}")
-    public List<Booking> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable String state) {
+    @GetMapping
+    public List<Booking> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                       @RequestParam(required = false) String state) {
         return bookingService.getAllBooking(userId, state);
     }
 
-    @GetMapping("owner?state={state}")
-    public List<Booking> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable String state) {
+    @GetMapping("owner")
+    public List<Booking> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                         @RequestParam(required = false) String state) {
         return bookingService.getOwnerBooking(userId, state);
     }
 }
