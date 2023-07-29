@@ -2,10 +2,10 @@ package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.exception.WrongDataException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidateEmailException;
 import ru.practicum.item.Item;
-import ru.practicum.item.ItemDto;
 import ru.practicum.item.ItemService;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
@@ -22,9 +22,22 @@ public class BookingService {
     private final ItemService itemService;
 
     public BookingDto add(Long userId, BookingPostDto bookingDto) {
+        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
+            throw new WrongDataException("");
+        }
+
+        if (!bookingDto.getStart().isBefore(bookingDto.getEnd())) {
+            throw new WrongDataException("");
+        }
+
         User user = userService.get(userId);
         Item item = itemService.get(bookingDto.getItemId());
-        if (repository.findByBooker_IdAndItem_Id(userId, bookingDto.getItemId()).isPresent()){
+        if (!item.getAvailable()) {
+            throw new WrongDataException("Item " + item.getId() + " not available");
+        }
+
+        //TODO ПОМЕНЯТЬ ЭКСЕПШЕН
+        if (repository.findByBooker_IdAndItem_Id(userId, bookingDto.getItemId()).isPresent()) {
             throw new ValidateEmailException("");
         }
         Booking booking = Booking.builder()

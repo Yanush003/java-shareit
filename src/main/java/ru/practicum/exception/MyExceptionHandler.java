@@ -23,4 +23,9 @@ public class MyExceptionHandler {
     public ResponseEntity<?> handlerIllegalArgumentException(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
     }
+
+    @ExceptionHandler(WrongDataException.class)
+    public ResponseEntity<String> handleWrongDataException(WrongDataException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
