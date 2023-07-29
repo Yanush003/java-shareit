@@ -11,19 +11,19 @@ import java.util.List;
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-    BookingService bookingService;
+    private final BookingService bookingService;
 
     @PostMapping
     public BookingDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
-                             @RequestBody BookingDto bookingDto) {
-        return bookingService.add(userId,bookingDto);
+                          @RequestBody BookingPostDto bookingDto) {
+        return bookingService.add(userId, bookingDto);
     }
 
     @PatchMapping("/{bookingId}?approved={approved}")
     public Item update(@RequestHeader("X-Sharer-User-Id") Long userId,
                        @PathVariable("bookingId") Long bookingId,
-                       @RequestBody ItemDto itemDto, @PathVariable Boolean approved) {
-        return bookingService.update(userId, bookingId,itemDto,approved);
+                       @PathVariable Boolean approved) {
+        return bookingService.update(userId, bookingId, approved);
     }
 
     @GetMapping("/{bookingId}")
@@ -33,7 +33,7 @@ public class BookingController {
 
     @GetMapping("?state={state}")
     public List<Booking> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable String state) {
-        return bookingService.getAllBooking(userId,state);
+        return bookingService.getAllBooking(userId, state);
     }
 
     @GetMapping("owner?state={state}")

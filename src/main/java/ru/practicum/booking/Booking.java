@@ -27,10 +27,10 @@ public class Booking {
     private LocalDateTime start; // — дата и время начала бронирования;
     @Column(name = "end_date")
     private LocalDateTime end; // — дата и время конца бронирования;
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
     private Item item; // — вещь, которую пользователь бронирует;
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "booker_id")
     private User booker; // — пользователь, который осуществляет бронирование;
     @Enumerated(EnumType.STRING)

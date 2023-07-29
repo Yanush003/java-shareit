@@ -3,9 +3,11 @@ package ru.practicum.booking;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.ValidateEmailException;
 import ru.practicum.item.Item;
 import ru.practicum.item.ItemDto;
 import ru.practicum.item.ItemService;
+import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
 import java.time.LocalDateTime;
@@ -19,10 +21,19 @@ public class BookingService {
     private final UserService userService;
     private final ItemService itemService;
 
-    public BookingDto add(Long userId, BookingDto bookingDto) {
-        Booking booking = BookingMapper.toBooking(bookingDto);
-        booking.setBooker(userService.get(userId));
-        booking.setStatus(Status.WAITING);
+    public BookingDto add(Long userId, BookingPostDto bookingDto) {
+        User user = userService.get(userId);
+        Item item = itemService.get(bookingDto.getItemId());
+        if (repository.findByBooker_IdAndItem_Id(userId, bookingDto.getItemId()).isPresent()){
+            throw new ValidateEmailException("");
+        }
+        Booking booking = Booking.builder()
+                .booker(user)
+                .item(item)
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .status(Status.WAITING)
+                .build();
         Booking save = repository.save(booking);
         return BookingMapper.toBookingDto(save);
     }
@@ -32,7 +43,7 @@ public class BookingService {
     // Затем статус бронирования становится либо APPROVED, либо REJECTED.
     // параметр approved может принимать значения true или false.
     //TODO УДАЛИТЬ itemDto везде
-    public Item update(Long userId, Long bookingId, ItemDto itemDto, Boolean approved) {
+    public Item update(Long userId, Long bookingId, Boolean approved) {
         Booking booking = get(bookingId);
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new NotFoundException("");
@@ -57,7 +68,7 @@ public class BookingService {
 
     private Booking get(Long bookingId) {
         return repository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + bookingId + " not exist"));
+                .orElseThrow(() -> new ValidateEmailException("User with id=" + bookingId + " not exist"));
     }
 
     //Получение списка всех бронирований текущего пользователя.
