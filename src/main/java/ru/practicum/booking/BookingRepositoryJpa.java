@@ -14,6 +14,7 @@ public interface BookingRepositoryJpa extends JpaRepository<Booking, Long> {
             "and (:status is null or b.status = :status)  " +
             "order by b.start")
     List<Booking> findAllByBooker_IdOrderByStart(Long bookerId, String status);
+    List<Booking> findAllByBooker_Id(Long id);
     List<Booking> findAllByItem_Owner_Id(Long ownerId);
     Optional<Booking> findByBooker_IdAndItem_Id(Long booker, Long item);
     @Query("select b from Booking b " +

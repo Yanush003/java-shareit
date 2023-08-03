@@ -1,7 +1,6 @@
 package ru.practicum.user;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.exception.DuplicateEmailException;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.*;

@@ -2,6 +2,7 @@ package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.comment.Comment;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public Item createComment (@PathVariable("itemId") Long itemId, String comment){
-       return  null;
+    public Item createComment (@PathVariable("itemId") Long itemId, Comment comment){
+       return  itemService.createComment(itemId, comment);
     }
 }

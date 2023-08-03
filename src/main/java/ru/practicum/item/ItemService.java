@@ -2,9 +2,8 @@ package ru.practicum.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.exception.NotAllowedException;
+import ru.practicum.comment.Comment;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidateEmailException;
 import ru.practicum.user.UserService;
 
 import java.util.ArrayList;
@@ -61,7 +60,8 @@ public class ItemService {
         return itemRepository.findAllByOwner(userService.get(userId));
     }
 
-    public Item createComment(Long itemId, String comment) {
+    public Item createComment(Long itemId, Comment comment) {
+        Item item = get(itemId);
         return null;
     }
 }
