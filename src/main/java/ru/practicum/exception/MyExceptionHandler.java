@@ -29,4 +29,9 @@ public class MyExceptionHandler {
     public  ResponseEntity<?> handlerIllegalArgumentException(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
     }
+
+    @ExceptionHandler(WrongDataException.class)
+    public ResponseEntity<String> handleWrongDataException(WrongDataException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
 }
