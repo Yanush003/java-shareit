@@ -8,6 +8,7 @@ import ru.practicum.booking.Status;
 import ru.practicum.comment.Comment;
 import ru.practicum.comment.CommentDto;
 import ru.practicum.comment.CommentMapper;
+import ru.practicum.comment.CommentRepositoryJpa;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
