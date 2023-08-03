@@ -3,6 +3,7 @@ package ru.practicum.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class UserService {
 
     public UserDto create(UserDto userDto) {
         if (userDto.getEmail() == null) {
-            throw new ValidateEmailException("");
+            throw new BadRequestException("");
         }
         User user = UserMapper.toUser(userDto);
         User user1 = repository.save(user);
@@ -24,13 +25,13 @@ public class UserService {
 
     public User get(Long userId) {
         return repository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not exist"));
+                .orElseThrow(() -> new NotFoundException(""));
     }
 
     @Transactional
     public UserDto update(Long id, UserDto userDto) {
         userDto.setId(id);
-        User user = repository.findById(id).orElseThrow(() -> new NotFoundException("User with id=" + id + " not exist"));
+        User user = repository.findById(id).orElseThrow(() -> new NotFoundException(""));
 
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
@@ -48,13 +49,5 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         return repository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
-    }
-
-    private boolean validateEmail(User user) {
-        List<User> userList = repository.findAll()
-                .stream()
-                .filter(x -> x.getEmail().equals(user.getEmail()))
-                .collect(Collectors.toList());
-        return userList.size() > 0;
     }
 }
