@@ -16,17 +16,17 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name="items")
+@Table(name = "items")
 public class Item {
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     @Id
     private Long id;
     @NotBlank
     @Column(name = "name")
     private String name;
     @NotBlank
-    @Column (name = "description")
+    @Column(name = "description")
     private String description;
     @NotNull
     @Column(name = "available")

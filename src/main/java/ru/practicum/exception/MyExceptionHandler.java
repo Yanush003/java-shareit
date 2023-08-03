@@ -18,20 +18,21 @@ public class MyExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handlerIllegalArgumentException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                "{\n\"error\": \""+ex.getMessage()+"\"\n}");
+                "{\n\"error\": \"" + ex.getMessage() + "\"\n}");
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public  ResponseEntity<?> handlerIllegalArgumentException(NotFoundException ex) {
+    public ResponseEntity<?> handlerIllegalArgumentException(NotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
+
     @ExceptionHandler(ForbiddenException.class)
-    public  ResponseEntity<?> handlerIllegalArgumentException(ForbiddenException ex) {
+    public ResponseEntity<?> handlerIllegalArgumentException(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
     }
 
     @ExceptionHandler(WrongDataException.class)
-    public ResponseEntity<String> handleWrongDataException(WrongDataException ex){
+    public ResponseEntity<String> handleWrongDataException(WrongDataException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
