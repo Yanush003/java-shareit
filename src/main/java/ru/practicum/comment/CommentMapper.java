@@ -1,12 +1,12 @@
 package ru.practicum.comment;
 
-import lombok.Data;
+import lombok.experimental.UtilityClass;
 
 import java.time.LocalDateTime;
 
-@Data
+@UtilityClass
 public class CommentMapper {
-    public static CommentDto toCommentDto(Comment comment) {
+    public CommentDto toCommentDto(Comment comment) {
         return CommentDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -15,7 +15,7 @@ public class CommentMapper {
                 .build();
     }
 
-    public static Comment toComment(CommentDto commentDto) {
+    public Comment toComment(CommentDto commentDto) {
         return Comment.builder()
                 .text(commentDto.getText())
                 .created(LocalDateTime.now())

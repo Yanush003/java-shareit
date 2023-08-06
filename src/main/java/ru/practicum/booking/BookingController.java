@@ -2,7 +2,7 @@ package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
+import ru.practicum.exception.BadRequestException;
 
 import java.util.List;
 
@@ -33,13 +33,17 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(required = false) String state) {
+                                          @RequestParam(required = false, defaultValue = "ALL") String state) {
+        Status.from(state)
+                .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
         return bookingService.getAllBooking(userId, state);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                            @RequestParam(required = false) String state) {
+                                            @RequestParam(required = false, defaultValue = "ALL") String state) {
+        Status.from(state)
+                .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
         return bookingService.getOwnerBooking(userId, state);
     }
 }

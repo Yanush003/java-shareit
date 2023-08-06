@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.item.Item;
-import ru.practicum.item.ItemService;
+import ru.practicum.item.ItemRepositoryJpa;
 import ru.practicum.user.User;
-import ru.practicum.user.UserService;
+import ru.practicum.user.UserRepositoryJpa;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BookingService {
-    private final BookingRepositoryJpa repository;
-    private final UserService userService;
-    private final ItemService itemService;
+    private final BookingRepositoryJpa bookingRepository;
+    private final UserRepositoryJpa userRepository;
+    private final ItemRepositoryJpa itemRepository;
 
     @Transactional
     public BookingDto add(BookingDto bookingDto, Long userId) {
-        User user = userService.get(userId);
-        Item item = itemService.get(bookingDto.getItemId());
+        User user = getUserById(userId);
+        Item item = getItemById(bookingDto.getItemId());
         if (!item.getAvailable()
                 || bookingDto.getStart() == null
                 || bookingDto.getEnd() == null
@@ -44,9 +44,8 @@ public class BookingService {
         booking.setBooker(user);
         booking.setStatus(bookingDto.getStatus() == null ? Status.WAITING : bookingDto.getStatus());
         booking.setItem(item);
-        return BookingMapper.toBookingDto(repository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
-
 
     @Transactional
     public BookingDto update(Long userId, Long bookingId, Boolean approved) {
@@ -54,19 +53,19 @@ public class BookingService {
         if (booking.getStatus() == (Status.APPROVED) && approved) {
             throw new BadRequestException("");
         }
-        Item item = itemService.get(booking.getItem().getId());
+        Item item = getItemById(booking.getItem().getId());
         if (Objects.equals(item.getOwner().getId(), userId)) {
             booking.setStatus(approved ? Status.APPROVED : Status.REJECTED);
         } else {
             throw new NotFoundException("");
         }
-        return BookingMapper.toBookingDto(repository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Transactional
     public BookingDto getByUserId(Long bookingId, Long userId) {
         var booking = get(bookingId);
-        userService.get(userId);
+        getUserById(userId);
         if (!Objects.equals(booking.getBooker().getId(), userId)
                 && !Objects.equals(booking.getItem().getOwner().getId(), userId)) {
             throw new NotFoundException("");
@@ -74,11 +73,10 @@ public class BookingService {
         return BookingMapper.toBookingDto(booking);
     }
 
-
     @Transactional
     public List<BookingDto> getAllBooking(Long userId, String state) {
-        userService.get(userId);
-        List<Booking> allByBookerId = repository.findAllByBookerId(userId);
+        getUserById(userId);
+        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId);
         List<Booking> bookings = sortByState(allByBookerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -87,14 +85,14 @@ public class BookingService {
     }
 
     private Booking get(Long bookingId) {
-        return repository.findById(bookingId)
+        return bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new NotFoundException(""));
     }
 
     @Transactional
     public List<BookingDto> getOwnerBooking(long userId, String state) {
-        userService.get(userId);
-        List<Booking> allByItemOwnerId = repository.findAllByItem_OwnerId(userId);
+        getUserById(userId);
+        List<Booking> allByItemOwnerId = bookingRepository.findAllByItem_OwnerId(userId);
         List<Booking> bookings = sortByState(allByItemOwnerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -102,8 +100,17 @@ public class BookingService {
                 .collect(Collectors.toList());
     }
 
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(""));
+    }
+
+    private Item getItemById(Long itemId) {
+        return itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException(""));
+    }
+
     private List<Booking> sortByState(List<Booking> allByBookerId, String state) {
-        if (state == null) state = "ALL";
         switch (state) {
             case "CURRENT":
                 return allByBookerId.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()) && x.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());
@@ -118,7 +125,7 @@ public class BookingService {
             case "ALL":
                 return new ArrayList<>(allByBookerId);
             default:
-                throw new BadRequestException("Unknown state: " + state);
+                return new ArrayList<>();
         }
     }
 }
