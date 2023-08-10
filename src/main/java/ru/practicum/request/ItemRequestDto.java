@@ -8,9 +8,9 @@ import java.util.Date;
 
 @Data
 @Builder
-public class RequestDto {
+public class ItemRequestDto {
     private Long id;
     private String description;
-    private User requester;
-    private Date created;
+    private User requester; //Dto
+    private Date created; //Dto
 }
