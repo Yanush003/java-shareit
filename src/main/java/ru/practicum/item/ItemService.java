@@ -42,8 +42,8 @@ public class ItemService {
         addCommentsDto(itemDto);
         return itemDto;
     }
-
-    public ItemDto add(Long userId, ItemDto itemDto) {
+//TODO добавить в логику requestId
+    public ItemDto add(Long userId, ItemDto itemDto, Long requestId) {
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userService.get(userId));
         Item item1 = itemRepository.save(item);

@@ -30,6 +30,8 @@ public class ItemDto {
 
     private ItemRequest request;
 
+    private Long requestId;
+
     private NearByBooking lastBooking;
 
     private NearByBooking nextBooking;

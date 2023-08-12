@@ -18,11 +18,13 @@ public class ItemController {
                        @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.getById(itemId, userId);
     }
-
+//чтобы пользователи могли отвечать на запросы друг друга. Для этого при создании вещи должна быть возможность указать id запроса, в ответ на который создаётся нужная вещь.
+//Добавьте поле requestId в тело запроса POST /items. Обратите внимание, что должна сохраниться возможность добавить вещь и без указания requestId.
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @RequestBody @Valid ItemDto itemDto) {
-        return itemService.add(userId, itemDto);
+                          @RequestBody @Valid ItemDto itemDto,
+                          @RequestBody(required = false) Long requestId) {
+        return itemService.add(userId, itemDto, requestId);
     }
 
     @PatchMapping("/{itemId}")
@@ -31,12 +33,12 @@ public class ItemController {
                           @RequestBody ItemDto itemDto) {
         return itemService.update(userId, itemId, itemDto);
     }
-
+    //TODO ПАГИНАЦИЯ from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
     @GetMapping("/search")
     public List<ItemDto> search(@RequestParam("text") String text) {
         return itemService.search(text);
     }
-
+//TODO ПАГИНАЦИЯ from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
     @GetMapping
     public List<ItemDto> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemService.getAll(userId);
