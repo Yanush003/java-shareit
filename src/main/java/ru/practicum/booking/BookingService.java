@@ -1,6 +1,8 @@
 package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
@@ -74,9 +76,13 @@ public class BookingService {
     }
 
     @Transactional
-    public List<BookingDto> getAllBooking(Long userId, String state) {
+    public List<BookingDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
         getUserById(userId);
-        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId);
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("");
+        }
+        PageRequest pageRequest = PageRequest.of(from, size, Sort.by("start").descending());
+        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId, pageRequest).getContent();
         List<Booking> bookings = sortByState(allByBookerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
@@ -90,9 +96,13 @@ public class BookingService {
     }
 
     @Transactional
-    public List<BookingDto> getOwnerBooking(long userId, String state) {
+    public List<BookingDto> getOwnerBooking(Long userId, String state, Integer from, Integer size) {
         getUserById(userId);
-        List<Booking> allByItemOwnerId = bookingRepository.findAllByItem_OwnerId(userId);
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("");
+        }
+        PageRequest pageRequest = PageRequest.of(from, size, Sort.by("start").descending());
+        List<Booking> allByItemOwnerId = bookingRepository.findAllByItem_OwnerId(userId, pageRequest).getContent();
         List<Booking> bookings = sortByState(allByItemOwnerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())

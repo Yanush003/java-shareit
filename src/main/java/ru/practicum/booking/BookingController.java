@@ -45,17 +45,22 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @RequestParam(required = false, defaultValue = "ALL") String state) {
+                                          @RequestParam(required = false, defaultValue = "ALL") String state,
+                                          @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                          @RequestParam(name = "size", defaultValue = "100") Integer size) {
         Status.from(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.getAllBooking(userId, state);
+        return bookingService.getAllBooking(userId, state, from, size);
     }
+
     //TODO ПАГИНАЦИЯ from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
     @GetMapping("/owner")
     public List<BookingDto> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                            @RequestParam(required = false, defaultValue = "ALL") String state) {
+                                            @RequestParam(required = false, defaultValue = "ALL") String state,
+                                            @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                            @RequestParam(name = "size", defaultValue = "100") Integer size) {
         Status.from(state)
                 .orElseThrow(() -> new BadRequestException("Unknown state: " + state));
-        return bookingService.getOwnerBooking(userId, state);
+        return bookingService.getOwnerBooking(userId, state, from, size);
     }
 }

@@ -22,9 +22,8 @@ public class ItemController {
 //Добавьте поле requestId в тело запроса POST /items. Обратите внимание, что должна сохраниться возможность добавить вещь и без указания requestId.
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @RequestBody @Valid ItemDto itemDto,
-                          @RequestBody(required = false) Long requestId) {
-        return itemService.add(userId, itemDto, requestId);
+                          @RequestBody @Valid ItemDto itemDto) {
+        return itemService.add(userId, itemDto);
     }
 
     @PatchMapping("/{itemId}")

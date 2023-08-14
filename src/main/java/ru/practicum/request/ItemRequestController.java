@@ -38,7 +38,7 @@ public class ItemRequestController {
     // Для этого нужно передать два параметра:
     // from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
     @GetMapping("/all")
-    public List<ItemRequest> getOtherListRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<ItemRequestWithAnswersDto> getOtherListRequests(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                   @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                   @RequestParam(name = "size", defaultValue = "10") Integer size) {
         return itemRequestService.getOtherListRequests(userId, from, size);

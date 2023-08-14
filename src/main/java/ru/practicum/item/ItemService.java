@@ -12,6 +12,7 @@ import ru.practicum.comment.CommentRepositoryJpa;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.ForbiddenException;
 import ru.practicum.exception.NotFoundException;
+import ru.practicum.request.ItemRequestRepositoryJpa;
 import ru.practicum.user.User;
 import ru.practicum.user.UserService;
 
@@ -27,6 +28,7 @@ public class ItemService {
     private final ItemRepositoryJpa itemRepository;
     private final BookingRepositoryJpa bookingRepository;
     private final CommentRepositoryJpa commentRepository;
+    private final ItemRequestRepositoryJpa itemRequestRepository;
 
     public Item get(Long itemId) {
         return itemRepository.findById(itemId)
@@ -42,10 +44,14 @@ public class ItemService {
         addCommentsDto(itemDto);
         return itemDto;
     }
-//TODO добавить в логику requestId
-    public ItemDto add(Long userId, ItemDto itemDto, Long requestId) {
+
+    public ItemDto add(Long userId, ItemDto itemDto) {
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(userService.get(userId));
+        Long requestId = itemDto.getRequestId();
+        if (requestId != null) {
+            item.setRequest(itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("")));
+        }
         Item item1 = itemRepository.save(item);
         return ItemMapper.toItemDto(item1);
     }
