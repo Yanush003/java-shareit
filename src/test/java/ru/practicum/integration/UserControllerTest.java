@@ -31,9 +31,9 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private final Long TESTUSERID = 1L;
+    private final Long testUserId = 1L;
     private final UserDto mockUserDto = UserDto.builder()
-            .id(TESTUSERID)
+            .id(testUserId)
             .name("Test User")
             .email("test@example.com")
             .build();
@@ -41,10 +41,10 @@ public class UserControllerTest {
     @Before
     public void setUp() {
         when(userService.create(any(UserDto.class))).thenReturn(mockUserDto);
-        when(userService.getUser(TESTUSERID)).thenReturn(mockUserDto);
-        when(userService.update(eq(TESTUSERID), any(UserDto.class))).thenReturn(mockUserDto);
+        when(userService.getUser(testUserId)).thenReturn(mockUserDto);
+        when(userService.update(eq(testUserId), any(UserDto.class))).thenReturn(mockUserDto);
         when(userService.getAllUsers()).thenReturn(Collections.singletonList(mockUserDto));
-        doNothing().when(userService).remove(TESTUSERID);
+        doNothing().when(userService).remove(testUserId);
     }
 
     @Test
@@ -53,34 +53,34 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Test User\", \"email\": \"test@example.com\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TESTUSERID))
+                .andExpect(jsonPath("$.id").value(testUserId))
                 .andExpect(jsonPath("$.name").value("Test User"))
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
     public void getTest() throws Exception {
-        mockMvc.perform(get("/users/" + TESTUSERID))
+        mockMvc.perform(get("/users/" + testUserId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TESTUSERID))
+                .andExpect(jsonPath("$.id").value(testUserId))
                 .andExpect(jsonPath("$.name").value("Test User"))
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
     public void updateTest() throws Exception {
-        mockMvc.perform(patch("/users/" + TESTUSERID)
+        mockMvc.perform(patch("/users/" + testUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\": \"Updated User\", \"email\": \"updated@example.com\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TESTUSERID))
+                .andExpect(jsonPath("$.id").value(testUserId))
                 .andExpect(jsonPath("$.name").value("Test User"))
                 .andExpect(jsonPath("$.email").value("test@example.com"));
     }
 
     @Test
     public void removeTest() throws Exception {
-        mockMvc.perform(delete("/users/" + TESTUSERID))
+        mockMvc.perform(delete("/users/" + testUserId))
                 .andExpect(status().isOk());
     }
 
@@ -88,7 +88,7 @@ public class UserControllerTest {
     public void getAllUsersTest() throws Exception {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(TESTUSERID))
+                .andExpect(jsonPath("$[0].id").value(testUserId))
                 .andExpect(jsonPath("$[0].name").value("Test User"))
                 .andExpect(jsonPath("$[0].email").value("test@example.com"));
     }

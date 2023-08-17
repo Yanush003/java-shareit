@@ -36,16 +36,16 @@ public class ItemRequestControllerTest {
     @MockBean
     private ItemRequestService itemRequestService;
 
-    private final Long TESTUSERID = 1L;
-    private final Long TESTREQUESTID = 100L;
+    private final Long testUserId = 1L;
+    private final Long testRequestId = 100L;
     private final ItemRequestDto mockRequestDto = ItemRequestDto.builder()
-            .id(TESTREQUESTID)
+            .id(testRequestId)
             .description("Test description")
             .requester(new User())
             .created(LocalDateTime.now())
             .build();
     private final ItemRequestWithAnswersDto mockRequestWithAnswersDto = ItemRequestWithAnswersDto.builder()
-            .id(TESTREQUESTID)
+            .id(testRequestId)
             .description("Test description")
             .created(LocalDateTime.now())
             .items(Collections.singletonList(AnswerDto.builder().build()))
@@ -53,45 +53,45 @@ public class ItemRequestControllerTest {
 
     @Before
     public void setUp() {
-        when(itemRequestService.addRequest(eq(TESTUSERID), any())).thenReturn(mockRequestDto);
-        when(itemRequestService.getYourListRequests(TESTUSERID)).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
-        when(itemRequestService.getOtherListRequests(eq(TESTUSERID), anyInt(), anyInt())).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
-        when(itemRequestService.getItemRequest(TESTUSERID, TESTREQUESTID)).thenReturn(mockRequestWithAnswersDto);
+        when(itemRequestService.addRequest(eq(testUserId), any())).thenReturn(mockRequestDto);
+        when(itemRequestService.getYourListRequests(testUserId)).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
+        when(itemRequestService.getOtherListRequests(eq(testUserId), anyInt(), anyInt())).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
+        when(itemRequestService.getItemRequest(testUserId, testRequestId)).thenReturn(mockRequestWithAnswersDto);
     }
 
     @Test
     public void addRequestTest() throws Exception {
         mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", TESTUSERID)
+                        .header("X-Sharer-User-Id", testUserId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"description\": \"Test description\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TESTREQUESTID));
+                .andExpect(jsonPath("$.id").value(testRequestId));
     }
 
     @Test
     public void getYourListRequestsTest() throws Exception {
         mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", TESTUSERID))
+                        .header("X-Sharer-User-Id", testUserId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(TESTREQUESTID));
+                .andExpect(jsonPath("$[0].id").value(testRequestId));
     }
 
     @Test
     public void getOtherListRequestsTest() throws Exception {
         mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", TESTUSERID)
+                        .header("X-Sharer-User-Id", testUserId)
                         .param("from", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(TESTREQUESTID));
+                .andExpect(jsonPath("$[0].id").value(testRequestId));
     }
 
     @Test
     public void getItemRequestTest() throws Exception {
-        mockMvc.perform(get("/requests/" + TESTREQUESTID)
-                        .header("X-Sharer-User-Id", TESTUSERID))
+        mockMvc.perform(get("/requests/" + testRequestId)
+                        .header("X-Sharer-User-Id", testUserId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TESTREQUESTID));
+                .andExpect(jsonPath("$.id").value(testRequestId));
     }
 }
