@@ -36,7 +36,10 @@ public class BookingService {
                 || bookingDto.getEnd().isBefore(LocalDateTime.now())
                 || bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getStart().equals(bookingDto.getEnd())
-                || bookingDto.getStart().isBefore(LocalDateTime.now())) {
+        ) {
+            throw new BadRequestException("");
+        }
+        if(bookingDto.getStart().isBefore(LocalDateTime.now())){
             throw new BadRequestException("");
         }
         if (Objects.equals(userId, item.getOwner().getId())) {
@@ -80,6 +83,11 @@ public class BookingService {
         getUserById(userId);
         if (from < 0 || size <= 0) {
             throw new BadRequestException("");
+        }
+        int totalElements = bookingRepository.findAllByBooker_Id(userId).size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        if (from >= totalPages) {
+            from = totalPages - 1;
         }
         PageRequest pageRequest = PageRequest.of(from, size, Sort.by("start").descending());
         List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId, pageRequest).getContent();

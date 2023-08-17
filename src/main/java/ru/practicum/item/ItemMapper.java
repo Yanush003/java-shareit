@@ -30,16 +30,6 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemDto toItemDtoWithRequestId(Item item) {
-        return ItemDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .requestId(item.getRequest().getId())
-                .build();
-    }
-
     public static AnswerDto toAnswerItemDtoWithRequestId(Item item) {
         return AnswerDto.builder()
                 .id(item.getId())

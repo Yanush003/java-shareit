@@ -30,18 +30,6 @@ public class BookingController {
                                @RequestHeader("X-Sharer-User-Id") Long userId) {
         return bookingService.getByUserId(bookingId, userId);
     }
-    //TODO ПАГИНАЦИЯ from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
-
-/*    Реализация пагинации
-      Для реализации пагинации используйте возможности, предоставляемые JpaRepository . Вам нужно определить в
-      интерфейсе репозитория метод поиска, аналогичный тому, который вы использовали ранее, но принимающий в
-      качестве параметра также объект Pageable . Например, для поиска вещи ранее использовался метод List<Item>
-      findByOwnerId , создайте метод Page<Item> findByOwnerId(Long ownerId, Pageable pageable) . Тогда всё остальное для
-      реализации пагинации на уровне базы данных для вас сделает Spring.
-      Вам нужно будет только изменить вызов к данному методу, передавая в качестве дополнительного параметра
-      описание требуемой страницы. Для этого используйте метод PageRequest.of(page, size, sort) . Обратите внимание,
-      что вам нужно будет преобразовать параметры, передаваемые пользователем, — start и size — к параметрам,
-      требуемым Spring, — page и тот же size .*/
 
     @GetMapping
     public List<BookingDto> getAllBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
@@ -53,7 +41,6 @@ public class BookingController {
         return bookingService.getAllBooking(userId, state, from, size);
     }
 
-    //TODO ПАГИНАЦИЯ from — индекс первого элемента, начиная с 0, и size — количество элементов для отображения.
     @GetMapping("/owner")
     public List<BookingDto> getOwnerBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                             @RequestParam(required = false, defaultValue = "ALL") String state,

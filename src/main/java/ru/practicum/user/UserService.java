@@ -32,7 +32,6 @@ public class UserService {
     public UserDto update(Long id, UserDto userDto) {
         userDto.setId(id);
         User user = repository.findById(id).orElseThrow(() -> new NotFoundException(""));
-
         if (userDto.getEmail() != null) {
             user.setEmail(userDto.getEmail());
         }
@@ -49,5 +48,9 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         return repository.findAll().stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+    }
+
+    public UserDto getUser(Long userId) {
+        return UserMapper.toUserDto(get(userId));
     }
 }
