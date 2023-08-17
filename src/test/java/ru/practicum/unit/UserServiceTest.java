@@ -151,6 +151,7 @@ public class UserServiceTest {
     private User createTestUser() {
         return User.builder().name("Test mailto:user").email("test@example.com").build();
     }
+
     private UserDto createTestUserDto() {
         return UserDto.builder().name("Test mailto:user").email("test@example.com").build();
     }
