@@ -1,26 +1,35 @@
 package ru.practicum.booking;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.item.Item;
 import ru.practicum.user.User;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+@Entity
+@Table(name = "bookings")
 public class Booking {
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id; // — уникальный идентификатор бронирования;
-    private Date start; // — дата и время начала бронирования;
-    private Date end; // — дата и время конца бронирования;
+    @Column(name = "start_date")
+    private LocalDateTime start; // — дата и время начала бронирования;
+    @Column(name = "end_date")
+    private LocalDateTime end; // — дата и время конца бронирования;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "item_id")
     private Item item; // — вещь, которую пользователь бронирует;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "booker_id")
     private User booker; // — пользователь, который осуществляет бронирование;
+    @Enumerated(EnumType.STRING)
     private Status status; // — статус бронирования. Может принимать одно из следующих
     // значений: WAITING, APPROVED, REJECTED, CANCELED. (пока сделала Enum Status)
-
-    //отзыв еще должен быть!
 }

@@ -84,4 +84,8 @@ public class ItemRepositoryImpl implements ItemRepository {
         }
         return items.get(userId);
     }
+
+    public Item createComment(Long itemId, String comment) {
+        return null;
+    }
 }

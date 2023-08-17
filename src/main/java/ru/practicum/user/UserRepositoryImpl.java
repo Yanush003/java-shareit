@@ -1,7 +1,7 @@
 package ru.practicum.user;
 
 import org.springframework.stereotype.Repository;
-import ru.practicum.exception.DuplicateEmailException;
+import ru.practicum.exception.InternalServerErrorException;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.*;
@@ -16,7 +16,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User create(User user) {
         if (validateEmail(user)) {
-            throw new DuplicateEmailException(user.getEmail());
+            throw new InternalServerErrorException(user.getEmail());
         }
         user.setId(id);
         users.put(id, user);
@@ -41,7 +41,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         if (user.getEmail() != null) {
             if (searchUserByEmail(user.getEmail(), userId).isPresent()) {
-                throw new DuplicateEmailException("");
+                throw new InternalServerErrorException("");
             }
             oldUser.setEmail(user.getEmail());
         }

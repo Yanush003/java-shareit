@@ -1,23 +1,25 @@
 package ru.practicum.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Getter
+@Entity
+@Table(name = "users")
 public class User {
 
-    private Long id; // — уникальный идентификатор пользователя;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotBlank
-    private String name; // — имя или логин пользователя;
+    private String name;
     @Email
-    private String email; // — адрес электронной почты (учтите, что два пользователя не могут
-    //иметь одинаковый адрес электронной почты).
+    private String email;
 }

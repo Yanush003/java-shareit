@@ -2,7 +2,6 @@ package ru.practicum.item;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.practicum.request.ItemRequest;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
@@ -12,8 +11,6 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .owner(item.getOwner())
-                .request(ItemRequest.builder().id(item.getRequest() != null ? item.getRequest().getId() : null).build())
                 .build();
     }
 
@@ -24,7 +21,6 @@ public class ItemMapper {
                 .description(itemDto.getDescription())
                 .available(itemDto.getAvailable())
                 .owner(itemDto.getOwner())
-                .request(ItemRequest.builder().id(itemDto.getRequest() != null ? itemDto.getRequest().getId() : null).build())
                 .build();
     }
 }

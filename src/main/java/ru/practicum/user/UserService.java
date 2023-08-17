@@ -2,40 +2,49 @@ package ru.practicum.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.exception.ValidateEmailException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepositoryImpl repository;
+    private final UserRepositoryJpa repository;
 
     public UserDto create(UserDto userDto) {
         if (userDto.getEmail() == null) {
-            throw new ValidateEmailException("");
+            throw new BadRequestException("");
         }
         User user = UserMapper.toUser(userDto);
-        User user1 = repository.create(user);
+        User user1 = repository.save(user);
         return UserMapper.toUserDto(user1);
     }
 
     public User get(Long userId) {
-        return Optional.ofNullable(repository.get(userId))
-                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not exist"));
+        return repository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(""));
     }
 
+    @Transactional
     public UserDto update(Long id, UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        User update = repository.update(id, user);
+        userDto.setId(id);
+        User user = repository.findById(id).orElseThrow(() -> new NotFoundException(""));
+
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
+        }
+        User update = repository.save(user);
         return UserMapper.toUserDto(update);
     }
 
     public void remove(Long userId) {
-        repository.remove(userId);
+        repository.delete(get(userId));
     }
 
     public List<UserDto> getAllUsers() {

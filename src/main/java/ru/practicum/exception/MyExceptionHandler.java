@@ -6,21 +6,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class MyExceptionHandler {
-    @ExceptionHandler(DuplicateEmailException.class)
-    public ResponseEntity<?> handlerDuplicateEmailException(DuplicateEmailException ex) {
+    @ExceptionHandler(InternalServerErrorException.class)
+    public ResponseEntity<?> handlerDuplicateEmailException(InternalServerErrorException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
     }
 
-    @ExceptionHandler(ValidateEmailException.class)
-    public ResponseEntity<?> handlerIllegalArgumentException(ValidateEmailException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handlerIllegalArgumentException(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "{\n\"error\": \"" + ex.getMessage() + "\"\n}");
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<?> handlerIllegalArgumentException(NotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<?> handlerIllegalArgumentException(ForbiddenException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
+    }
+
+    @ExceptionHandler(WrongDataException.class)
+    public ResponseEntity<String> handleWrongDataException(WrongDataException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
