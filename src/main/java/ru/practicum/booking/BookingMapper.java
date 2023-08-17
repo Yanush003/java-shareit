@@ -1,7 +1,10 @@
 package ru.practicum.booking;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class BookingMapper {
-    public static BookingDto toBookingDto(Booking booking) {
+    public BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())
@@ -12,7 +15,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static Booking toBooking(BookingDto bookingDto) {
+    public Booking toBooking(BookingDto bookingDto) {
         return Booking.builder()
                 .start(bookingDto.getStart())
                 .end(bookingDto.getEnd())

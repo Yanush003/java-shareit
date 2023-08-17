@@ -1,15 +1,14 @@
 package ru.practicum.item;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.practicum.request.AnswerDto;
 import ru.practicum.request.ItemRequest;
 
 import java.util.Optional;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class ItemMapper {
-    public static ItemDto toItemDto(Item item) {
+    public ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -20,7 +19,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static Item toItem(ItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         return Item.builder()
                 .id(itemDto.getId())
                 .name(itemDto.getName())
@@ -30,7 +29,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static AnswerDto toAnswerItemDtoWithRequestId(Item item) {
+    public AnswerDto toAnswerItemDtoWithRequestId(Item item) {
         return AnswerDto.builder()
                 .id(item.getId())
                 .name(item.getName())

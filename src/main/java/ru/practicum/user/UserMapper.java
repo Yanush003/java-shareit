@@ -1,11 +1,10 @@
 package ru.practicum.user;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Component
 public class UserMapper {
-    public static UserDto toUserDto(User user) {
+    public UserDto toUserDto(User user) {
         return UserDto.builder()
                 .name(user.getName())
                 .id(user.getId())
@@ -13,7 +12,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static User toUser(UserDto userDto) {
+    public User toUser(UserDto userDto) {
         return User.builder()
                 .id((userDto.getId() == null) ? null : userDto.getId())
                 .name((userDto.getName() == null) ? null : userDto.getName())

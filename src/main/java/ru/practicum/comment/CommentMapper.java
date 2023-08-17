@@ -1,10 +1,10 @@
 package ru.practicum.comment;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@UtilityClass
+@Component
 public class CommentMapper {
     public CommentDto toCommentDto(Comment comment) {
         return CommentDto.builder()

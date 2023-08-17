@@ -1,10 +1,10 @@
 package ru.practicum.request;
 
-import lombok.experimental.UtilityClass;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@UtilityClass
+@Component
 public class ItemRequestMapper {
     public ItemRequestDto toItemRequestDto(ItemRequest itemRequest) {
 
@@ -25,4 +25,3 @@ public class ItemRequestMapper {
                 .build();
     }
 }
-

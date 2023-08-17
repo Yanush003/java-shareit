@@ -29,6 +29,8 @@ public class ItemService {
     private final BookingRepositoryJpa bookingRepository;
     private final CommentRepositoryJpa commentRepository;
     private final ItemRequestRepositoryJpa itemRequestRepository;
+    private final ItemMapper itemMapper;
+    private final CommentMapper commentMapper;
 
     public Item get(Long itemId) {
         return itemRepository.findById(itemId)
@@ -37,7 +39,7 @@ public class ItemService {
 
     public ItemDto getById(Long itemId, Long userId) {
         Item item = get(itemId);
-        ItemDto itemDto = ItemMapper.toItemDto(item);
+        ItemDto itemDto = itemMapper.toItemDto(item);
         if (Objects.equals(item.getOwner().getId(), userId)) {
             addBookings(itemDto, bookingRepository.findAllByItemId(itemDto.getId()));
         }
@@ -46,14 +48,14 @@ public class ItemService {
     }
 
     public ItemDto add(Long userId, ItemDto itemDto) {
-        Item item = ItemMapper.toItem(itemDto);
+        Item item = itemMapper.toItem(itemDto);
         item.setOwner(getUser(userId));
         Long requestId = itemDto.getRequestId();
         if (requestId != null) {
             item.setRequest(itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("")));
         }
         Item item1 = itemRepository.save(item);
-        return ItemMapper.toItemDto(item1);
+        return itemMapper.toItemDto(item1);
     }
 
     public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
@@ -68,7 +70,7 @@ public class ItemService {
 
         item.setOwner(user);
         itemRepository.save(item);
-        return ItemMapper.toItemDto(itemRepository.save(item));
+        return itemMapper.toItemDto(itemRepository.save(item));
     }
 
     public List<ItemDto> search(String text) {
@@ -79,7 +81,7 @@ public class ItemService {
                 .stream()
                 .filter(item -> item.getDescription().toLowerCase().contains(text.toLowerCase())
                         && item.getAvailable().equals(true))
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -89,7 +91,7 @@ public class ItemService {
         return allByOwner.stream()
                 .sorted((x, y) -> Math.toIntExact(x.getId() - y.getId()))
                 .map(x -> {
-                    ItemDto itemDto = ItemMapper.toItemDto(x);
+                    ItemDto itemDto = itemMapper.toItemDto(x);
                     List<Booking> bookings = bookingList.stream().filter(y -> y.getItem().getId().equals(itemDto.getId())).collect(Collectors.toList());
                     addBookings(itemDto, bookings);
                     return itemDto;
@@ -106,11 +108,11 @@ public class ItemService {
         }
         Item item = get(itemId);
         User user = getUser(userId);
-        Comment comment = CommentMapper.toComment(commentDto);
+        Comment comment = commentMapper.toComment(commentDto);
         comment.setItem(item);
         comment.setAuthor(user);
         Comment save = commentRepository.save(comment);
-        return CommentMapper.toCommentDto(save);
+        return commentMapper.toCommentDto(save);
     }
 
     private boolean isBookingExists(long itemId, long userId) {
@@ -122,7 +124,7 @@ public class ItemService {
     private void addCommentsDto(ItemDto itemDto) {
         var comments = commentRepository.findAllByItemId(itemDto.getId());
         itemDto.setComments(comments.stream()
-                .map(CommentMapper::toCommentDto)
+                .map(commentMapper::toCommentDto)
                 .collect(Collectors.toList()));
     }
 

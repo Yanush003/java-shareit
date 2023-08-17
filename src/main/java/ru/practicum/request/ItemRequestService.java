@@ -20,6 +20,8 @@ public class ItemRequestService {
     private final ItemRequestRepositoryJpa itemRequestRepository;
     private final UserRepositoryJpa userRepository;
     private final ItemRepositoryJpa itemRepository;
+    private final ItemMapper itemMapper;
+    private final ItemRequestMapper itemRequestMapper;
 
     public ItemRequestDto addRequest(Long userId, ItemRequestDescriptionDto description) {
         User user = getUser(userId);
@@ -30,7 +32,7 @@ public class ItemRequestService {
                 .requester(user)
                 .description(description.getDescription())
                 .build();
-        return ItemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest));
+        return itemRequestMapper.toItemRequestDto(itemRequestRepository.save(itemRequest));
     }
 
     public List<ItemRequestWithAnswersDto> getYourListRequests(Long userId) {
@@ -39,9 +41,9 @@ public class ItemRequestService {
                 .filter(x -> x.getRequest() != null)
                 .collect(Collectors.toList());
         return itemRequestRepository.findByRequester(user).stream()
-                .map(x -> ItemRequestMapper.toItemRequestWithAnswersDto(x,
+                .map(x -> itemRequestMapper.toItemRequestWithAnswersDto(x,
                         itemList.stream().filter(y -> y.getRequest().getId().equals(x.getId()))
-                                .map(ItemMapper::toAnswerItemDtoWithRequestId)
+                                .map(itemMapper::toAnswerItemDtoWithRequestId)
                                 .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
@@ -51,10 +53,10 @@ public class ItemRequestService {
         PageRequest pageRequest = PageRequest.of(from, size);
         List<Item> itemList = itemRepository.findAll();
         List<Item> content = itemRequestRepository.findByRequester(user, pageRequest).getContent();
-        return content.stream().map(x -> ItemRequestMapper.toItemRequestWithAnswersDto(x.getRequest(),
+        return content.stream().map(x -> itemRequestMapper.toItemRequestWithAnswersDto(x.getRequest(),
                         itemList.stream()
                                 .filter(y -> y.getId().equals(x.getId()))
-                                .map(ItemMapper::toAnswerItemDtoWithRequestId)
+                                .map(itemMapper::toAnswerItemDtoWithRequestId)
                                 .collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
@@ -62,9 +64,9 @@ public class ItemRequestService {
     public ItemRequestWithAnswersDto getItemRequest(Long userId, Long requestId) {
         getUser(userId);
         ItemRequest itemRequest = getItem(requestId);
-        return ItemRequestMapper.toItemRequestWithAnswersDto(itemRequest,
+        return itemRequestMapper.toItemRequestWithAnswersDto(itemRequest,
                 itemRepository.findAllByRequest(itemRequest).stream()
-                        .map(ItemMapper::toAnswerItemDtoWithRequestId)
+                        .map(itemMapper::toAnswerItemDtoWithRequestId)
                         .collect(Collectors.toList())
         );
     }
