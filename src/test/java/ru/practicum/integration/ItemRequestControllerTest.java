@@ -36,16 +36,16 @@ public class ItemRequestControllerTest {
     @MockBean
     private ItemRequestService itemRequestService;
 
-    private final Long TEST_USER_ID = 1L;
-    private final Long TEST_REQUEST_ID = 100L;
+    private final Long TESTUSERID = 1L;
+    private final Long TESTREQUESTID = 100L;
     private final ItemRequestDto mockRequestDto = ItemRequestDto.builder()
-            .id(TEST_REQUEST_ID)
+            .id(TESTREQUESTID)
             .description("Test description")
             .requester(new User())
             .created(LocalDateTime.now())
             .build();
     private final ItemRequestWithAnswersDto mockRequestWithAnswersDto = ItemRequestWithAnswersDto.builder()
-            .id(TEST_REQUEST_ID)
+            .id(TESTREQUESTID)
             .description("Test description")
             .created(LocalDateTime.now())
             .items(Collections.singletonList(AnswerDto.builder().build()))
@@ -53,45 +53,45 @@ public class ItemRequestControllerTest {
 
     @Before
     public void setUp() {
-        when(itemRequestService.addRequest(eq(TEST_USER_ID), any())).thenReturn(mockRequestDto);
-        when(itemRequestService.getYourListRequests(TEST_USER_ID)).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
-        when(itemRequestService.getOtherListRequests(eq(TEST_USER_ID), anyInt(), anyInt())).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
-        when(itemRequestService.getItemRequest(TEST_USER_ID, TEST_REQUEST_ID)).thenReturn(mockRequestWithAnswersDto);
+        when(itemRequestService.addRequest(eq(TESTUSERID), any())).thenReturn(mockRequestDto);
+        when(itemRequestService.getYourListRequests(TESTUSERID)).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
+        when(itemRequestService.getOtherListRequests(eq(TESTUSERID), anyInt(), anyInt())).thenReturn(Collections.singletonList(mockRequestWithAnswersDto));
+        when(itemRequestService.getItemRequest(TESTUSERID, TESTREQUESTID)).thenReturn(mockRequestWithAnswersDto);
     }
 
     @Test
     public void addRequestTest() throws Exception {
         mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", TEST_USER_ID)
+                        .header("X-Sharer-User-Id", TESTUSERID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"description\": \"Test description\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TEST_REQUEST_ID));
+                .andExpect(jsonPath("$.id").value(TESTREQUESTID));
     }
 
     @Test
     public void getYourListRequestsTest() throws Exception {
         mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", TEST_USER_ID))
+                        .header("X-Sharer-User-Id", TESTUSERID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(TEST_REQUEST_ID));
+                .andExpect(jsonPath("$[0].id").value(TESTREQUESTID));
     }
 
     @Test
     public void getOtherListRequestsTest() throws Exception {
         mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", TEST_USER_ID)
+                        .header("X-Sharer-User-Id", TESTUSERID)
                         .param("from", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(TEST_REQUEST_ID));
+                .andExpect(jsonPath("$[0].id").value(TESTREQUESTID));
     }
 
     @Test
     public void getItemRequestTest() throws Exception {
-        mockMvc.perform(get("/requests/" + TEST_REQUEST_ID)
-                        .header("X-Sharer-User-Id", TEST_USER_ID))
+        mockMvc.perform(get("/requests/" + TESTREQUESTID)
+                        .header("X-Sharer-User-Id", TESTUSERID))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(TEST_REQUEST_ID));
+                .andExpect(jsonPath("$.id").value(TESTREQUESTID));
     }
 }
