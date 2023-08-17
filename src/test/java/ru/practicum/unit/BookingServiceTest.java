@@ -14,10 +14,11 @@ import ru.practicum.user.User;
 import ru.practicum.user.UserRepositoryJpa;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +35,9 @@ class BookingServiceTest {
 
     @Mock
     private ItemRepositoryJpa itemRepository;
+
+    @Mock
+    private BookingMapper bookingMapper;
 
     @BeforeEach
     void setUp() {
@@ -63,7 +67,6 @@ class BookingServiceTest {
         assertThrows(NotFoundException.class, () -> bookingService.add(bookingDto, 1L));
     }
 
-
     @Test
     void add_withValidBookingDto_returnsBookingDto() {
         User user = User.builder()
@@ -92,7 +95,7 @@ class BookingServiceTest {
                 .itemId(1L)
                 .status(Status.WAITING)
                 .build();
-        Booking someMockedBooking = Booking.builder()
+        Booking booking = Booking.builder()
                 .start(LocalDateTime.now().minusHours(10))
                 .end(LocalDateTime.now().plusHours(10))
                 .item(item)
@@ -102,8 +105,9 @@ class BookingServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
-        when(bookingRepository.save(any(Booking.class))).thenReturn(someMockedBooking);
-
+        when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
+        when(bookingMapper.toBooking(bookingDto)).thenReturn(booking);
+        when(bookingMapper.toBookingDto(booking)).thenReturn(bookingDto);
         assertNotNull(bookingService.add(bookingDto, 1L));
     }
 
@@ -167,5 +171,64 @@ class BookingServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", -1, 0));
     }
-}
 
+    @Test
+    void getByUserId_withMismatchedUserId_throwsNotFoundException() {
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBooking()));
+
+        assertThrows(NotFoundException.class, () -> bookingService.getByUserId(1L, 2L));
+    }
+
+    @Test
+    void update_withAlreadyApprovedStatus_throwsBadRequestException() {
+        Booking booking = mockBooking();
+        booking.setStatus(Status.APPROVED);
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+
+        assertThrows(BadRequestException.class, () -> bookingService.update(1L, 1L, true));
+    }
+
+    @Test
+    void getAllBooking_withInvalidPagination_throwsBadRequestException() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser()));
+
+        assertThrows(BadRequestException.class, () -> bookingService.getAllBooking(1L, "ALL", -1, 10));
+        assertThrows(BadRequestException.class, () -> bookingService.getAllBooking(1L, "ALL", 0, 0));
+    }
+
+    @Test
+    void getOwnerBooking_withInvalidPagination_throwsBadRequestException() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser()));
+
+        assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", -1, 10));
+        assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", 0, 0));
+    }
+
+    @Test
+    void sortByState_withUnknownState_returnsEmptyList() {
+        List<Booking> result = bookingService.sortByState(Collections.singletonList(mockBooking()), "UNKNOWN");
+
+        assertTrue(result.isEmpty());
+    }
+
+    private User mockUser() {
+        User user = new User();
+        user.setId(1L);
+        return user;
+    }
+
+    private Item mockItem() {
+        Item item = new Item();
+        item.setId(1L);
+        item.setOwner(mockUser());
+        return item;
+    }
+
+    private Booking mockBooking() {
+        Booking booking = new Booking();
+        booking.setId(1L);
+        booking.setBooker(mockUser());
+        booking.setItem(mockItem());
+        return booking;
+    }
+}

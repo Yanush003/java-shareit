@@ -21,18 +21,14 @@ public class UserDtoJsonTest {
                 .name("Test User")
                 .email("test@example.com")
                 .build();
-
         String json = objectMapper.writeValueAsString(userDto);
-
         assertThat(json).isEqualTo("{\"id\":1,\"name\":\"Test User\",\"email\":\"test@example.com\"}");
     }
 
     @Test
     void testDeserializeUserDto() throws Exception {
         String json = "{\"id\":1,\"name\":\"Test User\",\"email\":\"test@example.com\"}";
-
         UserDto userDto = objectMapper.readValue(json, UserDto.class);
-
         assertThat(userDto.getId()).isEqualTo(1L);
         assertThat(userDto.getName()).isEqualTo("Test User");
         assertThat(userDto.getEmail()).isEqualTo("test@example.com");

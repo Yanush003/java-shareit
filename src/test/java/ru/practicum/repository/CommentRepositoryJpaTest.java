@@ -14,9 +14,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-// Ваши собственные импорты моделей (User, Item,
-
-
 @DataJpaTest
 public class CommentRepositoryJpaTest {
 

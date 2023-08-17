@@ -5,6 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.dao.EmptyResultDataAccessException;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.user.User;
@@ -12,13 +13,14 @@ import ru.practicum.user.UserDto;
 import ru.practicum.user.UserRepositoryJpa;
 import ru.practicum.user.UserService;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
@@ -88,7 +90,9 @@ public class UserServiceTest {
 
     @Test
     public void testGetAllUsers() {
-        when(repository.findAll()).thenReturn(Collections.singletonList(new User()));
+        List<User> userList = new ArrayList<>();
+        userList.add(new User());
+        when(repository.findAll()).thenReturn(userList);
         userService.getAllUsers();
         verify(repository).findAll();
     }
@@ -98,5 +102,37 @@ public class UserServiceTest {
         when(repository.findById(1L)).thenReturn(Optional.of(new User()));
         userService.getUser(1L);
         verify(repository).findById(1L);
+    }
+
+    @Test
+    public void testGetUserDtoNotFound() {
+        when(repository.findById(1L)).thenReturn(Optional.empty());
+        try {
+            userService.getUser(1L);
+        } catch (NotFoundException ignored) {
+
+        }
+        verify(repository).findById(1L);
+    }
+
+    @Test
+    public void testGetAllUsersEmpty() {
+        when(repository.findAll()).thenReturn(Collections.emptyList());
+        List<UserDto> result = userService.getAllUsers();
+        assertEquals(0, result.size());
+        verify(repository).findAll();
+    }
+
+    @Test
+    public void testRemoveWithException() {
+        when(repository.findById(1L)).thenReturn(Optional.of(new User()));
+        doThrow(EmptyResultDataAccessException.class).when(repository).delete(any(User.class));
+        try {
+            userService.remove(1L);
+        } catch (Exception ignored) {
+
+        }
+        verify(repository).findById(1L);
+        verify(repository).delete(any(User.class));
     }
 }
