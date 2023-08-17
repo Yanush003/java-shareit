@@ -8,10 +8,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.dao.EmptyResultDataAccessException;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
-import ru.practicum.user.User;
-import ru.practicum.user.UserDto;
-import ru.practicum.user.UserRepositoryJpa;
-import ru.practicum.user.UserService;
+import ru.practicum.user.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,14 +28,29 @@ public class UserServiceTest {
     @Mock
     private UserRepositoryJpa repository;
 
-    @Test
-    public void testCreate() {
-        UserDto userDto = UserDto.builder()
-                .email("test@example.com")
-                .build();
-        when(repository.save(any(User.class))).thenReturn(new User());
+    @Mock
+    private UserMapper userMapper;
+
+    @Test(expected = BadRequestException.class)
+    public void testCreate_WithNullEmail_ShouldThrowBadRequestException() {
+        UserDto userDto = UserDto.builder().email(null).build();
         userService.create(userDto);
-        verify(repository).save(any(User.class));
+    }
+
+    @Test
+    public void testCreate_WithValidUserDto_ShouldSaveAndReturnUserDto() {
+        UserDto inputUserDto = UserDto.builder().email("test@example.com").build();
+        User user = new User();
+        User savedUser = new User();
+
+        when(userMapper.toUser(inputUserDto)).thenReturn(user);
+        when(repository.save(user)).thenReturn(savedUser);
+        when(userMapper.toUserDto(savedUser)).thenReturn(inputUserDto);
+
+        UserDto result = userService.create(inputUserDto);
+
+        verify(repository).save(user);
+        assertEquals(inputUserDto, result);
     }
 
     @Test(expected = BadRequestException.class)
@@ -134,5 +146,12 @@ public class UserServiceTest {
         }
         verify(repository).findById(1L);
         verify(repository).delete(any(User.class));
+    }
+
+    private User createTestUser() {
+        return User.builder().name("Test mailto:user").email("test@example.com").build();
+    }
+    private UserDto createTestUserDto() {
+        return UserDto.builder().name("Test mailto:user").email("test@example.com").build();
     }
 }
