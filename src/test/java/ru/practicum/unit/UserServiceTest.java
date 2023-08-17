@@ -15,8 +15,9 @@ import ru.practicum.user.UserService;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,7 +31,7 @@ public class UserServiceTest {
 
     @Test
     public void testCreate() {
-        UserDto userDto =UserDto.builder()
+        UserDto userDto = UserDto.builder()
                 .email("test@example.com")
                 .build();
         when(repository.save(any(User.class))).thenReturn(new User());
@@ -40,7 +41,7 @@ public class UserServiceTest {
 
     @Test(expected = BadRequestException.class)
     public void testCreateWithNullEmail() {
-        UserDto userDto =UserDto.builder().build();
+        UserDto userDto = UserDto.builder().build();
         userService.create(userDto);
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 public interface ItemRequestRepositoryJpa extends JpaRepository<ItemRequest, Long> {
     List<ItemRequest> findByRequester(User requester);
+
     @Query("select i from Item i JOIN i.request r where i.owner = :user")
     Page<Item> findByRequester(User user, Pageable pageable);
 }

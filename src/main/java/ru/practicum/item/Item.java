@@ -25,13 +25,12 @@ public class Item {
     @NotBlank
     private String description;
     @NotNull
-    private Boolean available; //— статус о том, доступна или нет вещь для аренды; Статус должен проставлять владелец.
+    private Boolean available;
     @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id")
-    private User owner; //— владелец вещи;
+    private User owner;
     @OneToOne
     @JoinColumn(name = "request_id")
-    private ItemRequest request; // если вещь была создана по запросу другого пользователя, то в этом
-    // поле будет храниться ссылка на соответствующий запрос
+    private ItemRequest request;
 }

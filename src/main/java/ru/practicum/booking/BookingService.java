@@ -39,7 +39,7 @@ public class BookingService {
         ) {
             throw new BadRequestException("");
         }
-        if(bookingDto.getStart().isBefore(LocalDateTime.now())){
+        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("");
         }
         if (Objects.equals(userId, item.getOwner().getId())) {

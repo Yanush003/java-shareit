@@ -10,7 +10,6 @@ public class BookingMapper {
                 .booker(booking.getBooker())
                 .status(booking.getStatus())
                 .build();
-
     }
 
     public static Booking toBooking(BookingDto bookingDto) {
@@ -18,7 +17,5 @@ public class BookingMapper {
                 .start(bookingDto.getStart())
                 .end(bookingDto.getEnd())
                 .build();
-
     }
-
 }

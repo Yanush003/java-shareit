@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ItemRepositoryJpa extends JpaRepository<Item, Long> {
     List<Item> findAllByOwner(User user);
+
     List<Item> findAllByRequest(ItemRequest itemRequest);
 }
