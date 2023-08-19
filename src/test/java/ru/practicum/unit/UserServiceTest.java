@@ -1,10 +1,11 @@
 package ru.practicum.unit;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
@@ -15,11 +16,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
     @InjectMocks
@@ -31,10 +31,10 @@ public class UserServiceTest {
     @Mock
     private UserMapper userMapper;
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void testCreate_WithNullEmail_ShouldThrowBadRequestException() {
         UserDto userDto = UserDto.builder().email(null).build();
-        userService.create(userDto);
+        Assertions.assertThrows(BadRequestException.class, () -> userService.create(userDto));
     }
 
     @Test
@@ -50,13 +50,13 @@ public class UserServiceTest {
         UserDto result = userService.create(inputUserDto);
 
         verify(repository).save(user);
-        assertEquals(inputUserDto, result);
+        Assertions.assertEquals(inputUserDto, result);
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void testCreateWithNullEmail() {
         UserDto userDto = UserDto.builder().build();
-        userService.create(userDto);
+        Assertions.assertThrows(BadRequestException.class, () -> userService.create(userDto));
     }
 
     @Test
@@ -66,10 +66,10 @@ public class UserServiceTest {
         verify(repository).findById(1L);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testGetNotFound() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
-        userService.get(1L);
+        Assertions.assertThrows(NotFoundException.class, () -> userService.get(1L));
     }
 
     @Test
@@ -85,11 +85,11 @@ public class UserServiceTest {
         verify(repository).save(any(User.class));
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void testUpdateNotFound() {
         UserDto userDto = UserDto.builder().build();
         when(repository.findById(1L)).thenReturn(Optional.empty());
-        userService.update(1L, userDto);
+        Assertions.assertThrows(NotFoundException.class, () -> userService.update(1L, userDto));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class UserServiceTest {
     public void testGetAllUsersEmpty() {
         when(repository.findAll()).thenReturn(Collections.emptyList());
         List<UserDto> result = userService.getAllUsers();
-        assertEquals(0, result.size());
+        Assertions.assertEquals(0, result.size());
         verify(repository).findAll();
     }
 
@@ -146,13 +146,5 @@ public class UserServiceTest {
         }
         verify(repository).findById(1L);
         verify(repository).delete(any(User.class));
-    }
-
-    private User createTestUser() {
-        return User.builder().name("Test mailto:user").email("test@example.com").build();
-    }
-
-    private UserDto createTestUserDto() {
-        return UserDto.builder().name("Test mailto:user").email("test@example.com").build();
     }
 }

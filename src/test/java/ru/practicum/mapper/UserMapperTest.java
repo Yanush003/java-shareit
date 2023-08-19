@@ -1,6 +1,6 @@
 package ru.practicum.mapper;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import ru.practicum.user.User;
 import ru.practicum.user.UserDto;
 import ru.practicum.user.UserMapper;
