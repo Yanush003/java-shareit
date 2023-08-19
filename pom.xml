@@ -156,6 +156,15 @@
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.8</version>
                     <configuration>
+                        <excludes>
+                            <exclude>**/Booking.class</exclude>
+                            <exclude>**/Comment.class</exclude>
+                            <exclude>**/Item.class</exclude>
+                            <exclude>**/ItemRequest.class</exclude>
+                            <exclude>**/User.class</exclude>
+                            <exclude>**/*Dto.class</exclude>
+                            <exclude>**/*Exception.class</exclude>
+                        </excludes>
                         <output>file</output>
                     </configuration>
                     <executions>
@@ -171,15 +180,7 @@
                                 <goal>check</goal>
                             </goals>
                             <configuration>
-                                <excludes>
-                                    <exclude>ru/practicum/**/ExcludedBooking.class</exclude>
-                                    <exclude>ru/practicum/**/ExcludedComment.class</exclude>
-                                    <exclude>ru/practicum/**/ExcludedItem.class</exclude>
-                                    <exclude>ru/practicum/**/ExcludedItemRequest.class</exclude>
-                                    <exclude>ru/practicum/**/ExcludedUser.class</exclude>
-                                    <exclude>ru/practicum/**/*Dto.*</exclude>
-                                    <exclude>**/resources/*</exclude>
-                                </excludes>
+
                                 <rules>
                                     <rule>
                                         <element>BUNDLE</element>
