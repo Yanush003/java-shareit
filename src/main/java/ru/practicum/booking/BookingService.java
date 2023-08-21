@@ -81,10 +81,11 @@ public class BookingService {
 
     @Transactional
     public List<BookingDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
-        getUserById(userId);
+
         if (from < 0 || size <= 0) {
             throw new BadRequestException("");
         }
+        getUserById(userId);
         int totalElements = bookingRepository.findAllByBooker_Id(userId).size();
         int totalPages = (int) Math.ceil((double) totalElements / size);
         if (from >= totalPages) {

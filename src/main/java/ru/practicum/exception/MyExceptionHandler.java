@@ -1,5 +1,6 @@
 package ru.practicum.exception;
 
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 public class MyExceptionHandler {
     @ExceptionHandler(InternalServerErrorException.class)
+    @Generated
     public ResponseEntity<?> handlerDuplicateEmailException(InternalServerErrorException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
     }
@@ -27,11 +29,13 @@ public class MyExceptionHandler {
     }
 
     @ExceptionHandler(ForbiddenException.class)
+    @Generated
     public ResponseEntity<?> handlerIllegalArgumentException(ForbiddenException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("");
     }
 
     @ExceptionHandler(WrongDataException.class)
+    @Generated
     public ResponseEntity<String> handleWrongDataException(WrongDataException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
