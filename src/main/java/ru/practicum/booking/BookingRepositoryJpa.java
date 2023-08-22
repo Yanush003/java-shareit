@@ -1,16 +1,20 @@
 package ru.practicum.booking;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface BookingRepositoryJpa extends JpaRepository<Booking, Long> {
+    Page<Booking> findAllByBookerId(Long userId, Pageable pageable);
 
-    List<Booking> findAllByBookerId(long userId);
+    List<Booking> findAllByBooker_Id(Long bookerId);
 
-    List<Booking> findAllByItem_OwnerId(long itemOwner);
+    Page<Booking> findAllByItem_OwnerId(Long itemOwner, Pageable pageable);
 
-    List<Booking> findAllByItemIdAndBookerId(long itemId, long bookerId);
+    List<Booking> findAllByItemIdAndBookerId(Long itemId, Long bookerId);
 
     List<Booking> findAllByItemId(Long itemId);
 }
+

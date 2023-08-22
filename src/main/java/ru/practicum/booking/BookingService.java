@@ -1,6 +1,8 @@
 package ru.practicum.booking;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.exception.BadRequestException;
 import ru.practicum.exception.NotFoundException;
@@ -23,6 +25,7 @@ public class BookingService {
     private final BookingRepositoryJpa bookingRepository;
     private final UserRepositoryJpa userRepository;
     private final ItemRepositoryJpa itemRepository;
+    private final BookingMapper bookingMapper;
 
     @Transactional
     public BookingDto add(BookingDto bookingDto, Long userId) {
@@ -34,17 +37,20 @@ public class BookingService {
                 || bookingDto.getEnd().isBefore(LocalDateTime.now())
                 || bookingDto.getEnd().isBefore(bookingDto.getStart())
                 || bookingDto.getStart().equals(bookingDto.getEnd())
-                || bookingDto.getStart().isBefore(LocalDateTime.now())) {
+        ) {
+            throw new BadRequestException("");
+        }
+        if (bookingDto.getStart().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("");
         }
         if (Objects.equals(userId, item.getOwner().getId())) {
             throw new NotFoundException("");
         }
-        Booking booking = BookingMapper.toBooking(bookingDto);
+        Booking booking = bookingMapper.toBooking(bookingDto);
         booking.setBooker(user);
         booking.setStatus(bookingDto.getStatus() == null ? Status.WAITING : bookingDto.getStatus());
         booking.setItem(item);
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Transactional
@@ -59,7 +65,7 @@ public class BookingService {
         } else {
             throw new NotFoundException("");
         }
-        return BookingMapper.toBookingDto(bookingRepository.save(booking));
+        return bookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Transactional
@@ -70,17 +76,27 @@ public class BookingService {
                 && !Objects.equals(booking.getItem().getOwner().getId(), userId)) {
             throw new NotFoundException("");
         }
-        return BookingMapper.toBookingDto(booking);
+        return bookingMapper.toBookingDto(booking);
     }
 
     @Transactional
-    public List<BookingDto> getAllBooking(Long userId, String state) {
+    public List<BookingDto> getAllBooking(Long userId, String state, Integer from, Integer size) {
+
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("");
+        }
         getUserById(userId);
-        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId);
+        int totalElements = bookingRepository.findAllByBooker_Id(userId).size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        if (from >= totalPages) {
+            from = totalPages - 1;
+        }
+        PageRequest pageRequest = PageRequest.of(from, size, Sort.by("start").descending());
+        List<Booking> allByBookerId = bookingRepository.findAllByBookerId(userId, pageRequest).getContent();
         List<Booking> bookings = sortByState(allByBookerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .map(BookingMapper::toBookingDto)
+                .map(bookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -90,13 +106,17 @@ public class BookingService {
     }
 
     @Transactional
-    public List<BookingDto> getOwnerBooking(long userId, String state) {
+    public List<BookingDto> getOwnerBooking(Long userId, String state, Integer from, Integer size) {
         getUserById(userId);
-        List<Booking> allByItemOwnerId = bookingRepository.findAllByItem_OwnerId(userId);
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("");
+        }
+        PageRequest pageRequest = PageRequest.of(from, size, Sort.by("start").descending());
+        List<Booking> allByItemOwnerId = bookingRepository.findAllByItem_OwnerId(userId, pageRequest).getContent();
         List<Booking> bookings = sortByState(allByItemOwnerId, state);
         return bookings.stream()
                 .sorted(Comparator.comparing(Booking::getStart).reversed())
-                .map(BookingMapper::toBookingDto)
+                .map(bookingMapper::toBookingDto)
                 .collect(Collectors.toList());
     }
 
@@ -110,7 +130,7 @@ public class BookingService {
                 .orElseThrow(() -> new NotFoundException(""));
     }
 
-    private List<Booking> sortByState(List<Booking> allByBookerId, String state) {
+    public List<Booking> sortByState(List<Booking> allByBookerId, String state) {
         switch (state) {
             case "CURRENT":
                 return allByBookerId.stream().filter(x -> x.getStart().isBefore(LocalDateTime.now()) && x.getEnd().isAfter(LocalDateTime.now())).collect(Collectors.toList());

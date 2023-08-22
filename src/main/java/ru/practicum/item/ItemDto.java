@@ -14,26 +14,17 @@ import java.util.List;
 @Builder
 public class ItemDto {
     private Long id;
-
-    @NotNull
     @NotBlank
     private String name;
-
-    @NotNull
     @NotBlank
     private String description;
-
     @NotNull
     private Boolean available;
-
     private User owner;
-
     private ItemRequest request;
-
+    private Long requestId;
     private NearByBooking lastBooking;
-
     private NearByBooking nextBooking;
-
     private List<CommentDto> comments;
 
     @Data

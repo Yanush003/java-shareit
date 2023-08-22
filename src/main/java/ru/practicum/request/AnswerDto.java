@@ -2,15 +2,13 @@ package ru.practicum.request;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.user.User;
-
-import java.util.Date;
 
 @Data
 @Builder
-public class RequestDto {
+public class AnswerDto {
     private Long id;
+    private String name;
     private String description;
-    private User requester;
-    private Date created;
+    private Boolean available;
+    private Long requestId;
 }

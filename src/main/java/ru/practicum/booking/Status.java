@@ -21,4 +21,3 @@ public enum Status {
         return Optional.empty();
     }
 }
-

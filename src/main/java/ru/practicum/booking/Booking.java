@@ -18,18 +18,17 @@ public class Booking {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long id; // — уникальный идентификатор бронирования;
+    private Long id;
     @Column(name = "start_date")
-    private LocalDateTime start; // — дата и время начала бронирования;
+    private LocalDateTime start;
     @Column(name = "end_date")
-    private LocalDateTime end; // — дата и время конца бронирования;
+    private LocalDateTime end;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "item_id")
-    private Item item; // — вещь, которую пользователь бронирует;
+    private Item item;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "booker_id")
-    private User booker; // — пользователь, который осуществляет бронирование;
+    private User booker;
     @Enumerated(EnumType.STRING)
-    private Status status; // — статус бронирования. Может принимать одно из следующих
-    // значений: WAITING, APPROVED, REJECTED, CANCELED. (пока сделала Enum Status)
+    private Status status;
 }
