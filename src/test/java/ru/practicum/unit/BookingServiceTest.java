@@ -519,5 +519,4 @@ class BookingServiceTest {
                 .status(status)
                 .build();
     }
-
 }
