@@ -48,10 +48,31 @@ class BookingServiceTest {
 
     private List<Booking> bookings;
     private LocalDateTime now;
+    private User mockUser;
+    private Item mockItem;
+    private Booking mockBookingWithApproved;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        mockUser = User.builder()
+                .id(1L)
+                .name("Test User")
+                .email("test@example.com")
+                .build();
+        mockItem = Item.builder()
+                .id(1L)
+                .name("Тестовый предмет")
+                .available(true)
+                .description("Тестовое описание")
+                .build();
+        mockBookingWithApproved = Booking.builder()
+                .id(2L)
+                .start(LocalDateTime.now().minusHours(10))
+                .end(LocalDateTime.now().plusHours(10))
+                .booker(mockUser)
+                .status(Status.APPROVED)
+                .build();
         now = LocalDateTime.now();
         bookings = Arrays.asList(
                 Booking.builder().start(now.minusDays(2)).end(now.minusDays(1)).status(Status.WAITING).build(),
@@ -63,34 +84,24 @@ class BookingServiceTest {
 
     @Test
     void add_withInvalidBookingDto_throwsBadRequestException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
         Item item = Item.builder()
                 .name("Тестовый предмет")
                 .available(true)
-                .owner(user)
+                .owner(mockUser)
                 .description("Тестовое описание")
                 .build();
         BookingDto bookingDto = BookingDto.builder()
-                .booker(user)
+                .booker(mockUser)
                 .item(item)
                 .status(Status.APPROVED)
                 .build();
         when(itemRepository.findById(1L)).thenReturn(Optional.of(new Item()));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         assertThrows(NotFoundException.class, () -> bookingService.add(bookingDto, 1L));
     }
 
     @Test
     void add_withValidBookingDto_returnsBookingDto() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
         User owner = User.builder()
                 .id(2L)
                 .name("Test User")
@@ -108,7 +119,7 @@ class BookingServiceTest {
                 .start(testStartTime.plusHours(1))
                 .end(testStartTime.plusHours(2))
                 .item(item)
-                .booker(user)
+                .booker(mockUser)
                 .itemId(1L)
                 .status(Status.WAITING)
                 .build();
@@ -116,10 +127,10 @@ class BookingServiceTest {
                 .start(LocalDateTime.now().minusHours(10))
                 .end(LocalDateTime.now().plusHours(10))
                 .item(item)
-                .booker(user)
+                .booker(mockUser)
                 .status(Status.WAITING)
                 .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         when(bookingRepository.save(any(Booking.class))).thenReturn(booking);
         when(bookingMapper.toBooking(bookingDto)).thenReturn(booking);
@@ -129,60 +140,26 @@ class BookingServiceTest {
 
     @Test
     void update_withInvalidStatus_throwsBadRequestException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        Booking booking = Booking.builder()
-                .id(1L)
-                .start(LocalDateTime.now().minusHours(10))
-                .end(LocalDateTime.now().plusHours(10))
-                .booker(user)
-                .status(Status.APPROVED)
-                .build();
-        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBookingWithApproved));
         assertThrows(BadRequestException.class, () -> bookingService.update(1L, 1L, true));
     }
 
     @Test
     void getByUserId_withInvalidUser_throwsNotFoundException() {
-        User user = User.builder()
-                .id(2L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        Booking booking = Booking.builder()
-                .id(2L)
-                .start(LocalDateTime.now().minusHours(10))
-                .end(LocalDateTime.now().plusHours(10))
-                .booker(user)
-                .status(Status.APPROVED)
-                .build();
-        when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
+        when(bookingRepository.findById(1L)).thenReturn(Optional.of(mockBookingWithApproved));
         when(userRepository.findById(1L)).thenReturn(Optional.of(new User()));
         assertThrows(NotFoundException.class, () -> bookingService.getByUserId(2L, 2L));
     }
 
     @Test
     void getAllBooking_withInvalidParams_throwsBadRequestException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         assertThrows(BadRequestException.class, () -> bookingService.getAllBooking(1L, "ALL", -1, 0));
     }
 
     @Test
     void getOwnerBooking_withInvalidParams_throwsBadRequestException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", -1, 0));
     }
 
@@ -202,14 +179,14 @@ class BookingServiceTest {
 
     @Test
     void getAllBooking_withInvalidPagination_throwsBadRequestException() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser()));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         assertThrows(BadRequestException.class, () -> bookingService.getAllBooking(1L, "ALL", -1, 10));
         assertThrows(BadRequestException.class, () -> bookingService.getAllBooking(1L, "ALL", 0, 0));
     }
 
     @Test
     void getOwnerBooking_withInvalidPagination_throwsBadRequestException() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser()));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", -1, 10));
         assertThrows(BadRequestException.class, () -> bookingService.getOwnerBooking(1L, "ALL", 0, 0));
     }
@@ -269,7 +246,7 @@ class BookingServiceTest {
     void add_whenItemNotFound_throwsNotFoundException() {
         BookingDto bookingDto = BookingDto.builder()
                 .itemId(1L)
-                .booker(mockUser())
+                .booker(mockUser)
                 .build();
         when(itemRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> bookingService.add(bookingDto, 1L));
@@ -279,7 +256,7 @@ class BookingServiceTest {
     void add_whenUserNotFound_throwsNotFoundException() {
         BookingDto bookingDto = BookingDto.builder()
                 .itemId(1L)
-                .booker(mockUser())
+                .booker(mockUser)
                 .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
@@ -303,29 +280,26 @@ class BookingServiceTest {
 
     @Test
     void add_withUnavailableItem_throwsBadRequestException() {
-        User user = User.builder().id(1L).name("Test User").email("test@example.com").build();
         Item item = Item.builder().id(1L).name("Тестовый предмет").available(false).description("Тестовое описание").build();
-        BookingDto bookingDto = BookingDto.builder().booker(user).item(item).status(Status.APPROVED).build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        BookingDto bookingDto = BookingDto.builder().booker(mockUser).item(item).status(Status.APPROVED).build();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(item));
         assertThrows(NotFoundException.class, () -> bookingService.add(bookingDto, 1L));
     }
 
     @Test
     void add_withInvalidItem_throwsNotFoundException() {
-        User user = User.builder().id(1L).name("Test User").email("test@example.com").build();
-        BookingDto bookingDto = BookingDto.builder().booker(user).itemId(99L).status(Status.APPROVED).build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        BookingDto bookingDto = BookingDto.builder().booker(mockUser).itemId(99L).status(Status.APPROVED).build();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(itemRepository.findById(99L)).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> bookingService.add(bookingDto, 1L));
     }
 
     @Test
     void getByUserId_withMismatchedUserId_throwsBadRequestException() {
-        User user = User.builder().id(1L).name("Test User").email("test@example.com").build();
         Item item = Item.builder().id(1L).name("Тестовый предмет").available(true).description("Тестовое описание").build();
-        Booking bookingDto = Booking.builder().booker(user).item(item).status(Status.APPROVED).build();
-        when(userRepository.findById(2L)).thenReturn(Optional.of(user));
+        Booking bookingDto = Booking.builder().booker(mockUser).item(item).status(Status.APPROVED).build();
+        when(userRepository.findById(2L)).thenReturn(Optional.of(mockUser));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(bookingDto));
         assertThrows(NullPointerException.class, () -> bookingService.getByUserId(1L, 2L));
     }
@@ -339,29 +313,18 @@ class BookingServiceTest {
 
     @Test
     void getByUserId_withValidUser_returnsBookingDto() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        Item item = Item.builder()
-                .id(1L)
-                .name("Тестовый предмет")
-                .available(true)
-                .description("Тестовое описание")
-                .build();
         Booking booking = Booking.builder()
-                .booker(user)
-                .item(item)
+                .booker(mockUser)
+                .item(mockItem)
                 .status(Status.APPROVED)
                 .build();
         BookingDto bookingDtoExpected = BookingDto.builder()
-                .booker(user)
-                .item(item)
+                .booker(mockUser)
+                .item(mockItem)
                 .status(Status.APPROVED)
                 .build();
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(bookingMapper.toBookingDto(booking)).thenReturn(bookingDtoExpected);
         BookingDto bookingDtoResult = bookingService.getByUserId(1L, 1L);
         assertEquals(bookingDtoExpected, bookingDtoResult);
@@ -371,9 +334,9 @@ class BookingServiceTest {
     void add_whenBookingMapperFails_throwsException() {
         BookingDto bookingDto = BookingDto.builder()
                 .itemId(1L)
-                .booker(mockUser())
+                .booker(mockUser)
                 .build();
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser()));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(itemRepository.findById(1L)).thenReturn(Optional.of(mockItem()));
         when(bookingMapper.toBooking(bookingDto)).thenThrow(new RuntimeException("Mapper error"));
         assertThrows(RuntimeException.class, () -> bookingService.add(bookingDto, 1L));
@@ -388,13 +351,7 @@ class BookingServiceTest {
 
     @Test
     void getByUserId_withoutBookingForUser_throwsBookingNotFoundException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(bookingRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(NotFoundException.class, () -> bookingService.getByUserId(1L, 1L));
@@ -402,24 +359,13 @@ class BookingServiceTest {
 
     @Test
     void getByUserId_withRejectedStatus_throwsInvalidStatusException() {
-        User user = User.builder()
-                .id(1L)
-                .name("Test User")
-                .email("test@example.com")
-                .build();
-        Item item = Item.builder()
-                .id(1L)
-                .name("Тестовый предмет")
-                .available(true)
-                .description("Тестовое описание")
-                .build();
         Booking booking = Booking.builder()
-                .booker(user)
-                .item(item)
+                .booker(mockUser)
+                .item(mockItem)
                 .status(Status.REJECTED)
                 .build();
         BookingDto bookingDto = bookingMapper.toBookingDto(booking);
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         when(bookingRepository.findById(1L)).thenReturn(Optional.of(booking));
         when(bookingMapper.toBookingDto(booking)).thenReturn(bookingDto);
         assertThrows(NotFoundException.class, () -> bookingService.getByUserId(1L, 2L));
@@ -443,7 +389,7 @@ class BookingServiceTest {
         when(itemRepository.findById(anyLong())).thenReturn(Optional.of(mockBooking.getItem()));
         when(bookingMapper.toBookingDto(any())).thenReturn(BookingDto.builder()
                 .itemId(1L)
-                .booker(mockUser())
+                .booker(mockUser)
                 .build());
         BookingDto update = bookingService.update(userId, bookingId, approved);
         assertEquals(Status.APPROVED, mockBooking.getStatus());
@@ -548,23 +494,17 @@ class BookingServiceTest {
         assertEquals(mockDtos, result);
     }
 
-    private User mockUser() {
-        User user = new User();
-        user.setId(1L);
-        return user;
-    }
-
     private Item mockItem() {
         Item item = new Item();
         item.setId(1L);
-        item.setOwner(mockUser());
+        item.setOwner(mockUser);
         return item;
     }
 
     private Booking mockBooking() {
         Booking booking = new Booking();
         booking.setId(1L);
-        booking.setBooker(mockUser());
+        booking.setBooker(mockUser);
         booking.setItem(mockItem());
         return booking;
     }
@@ -581,4 +521,3 @@ class BookingServiceTest {
     }
 
 }
-
