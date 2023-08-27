@@ -38,7 +38,7 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateItem(long userId, long itemId, ItemDto itemDto) {
-        return patch("/"+itemId, userId, itemDto);
+        return patch("/" + itemId, userId, itemDto);
     }
 
     public ResponseEntity<Object> getOtherListRequests(long userId, Integer from, Integer size) {
@@ -47,10 +47,10 @@ public class ItemRequestClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getItemRequest(long userId, long requestId) {
-        return get("/"+requestId, userId);
+        return get("/" + requestId, userId);
     }
 
     public ResponseEntity<Object> addComment(long itemId, long userId, CommentDto commentDto) {
-        return post("/"+userId+"/comment", itemId, commentDto);
+        return post("/" + userId + "/comment", itemId, commentDto);
     }
 }
