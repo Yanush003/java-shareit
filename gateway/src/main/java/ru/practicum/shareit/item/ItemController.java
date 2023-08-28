@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 @Slf4j
 @RestController
@@ -39,15 +38,11 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(@RequestParam("text") String text) {
-        log.info("text " + text);
-        if (text.isEmpty()) {
-            return ResponseEntity.ok().body(new ArrayList<>());
-        }
         return itemClient.search(text);
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllItem(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> getAllItem(@Valid @RequestHeader("X-Sharer-User-Id") Long userId) {
         return itemClient.getAllItem(userId);
     }
 

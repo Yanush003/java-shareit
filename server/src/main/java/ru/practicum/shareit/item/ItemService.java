@@ -122,7 +122,7 @@ public class ItemService {
     }
 
     private void addCommentsDto(ItemDto itemDto) {
-        var comments = commentRepository.findAllByItemId(itemDto.getId());
+        List<Comment> comments = commentRepository.findAllByItemId(itemDto.getId());
         itemDto.setComments(comments.stream()
                 .map(commentMapper::toCommentDto)
                 .collect(Collectors.toList()));

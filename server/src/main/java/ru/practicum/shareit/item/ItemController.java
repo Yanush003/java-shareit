@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
@@ -23,7 +22,7 @@ public class ItemController {
 
     @PostMapping
     public ItemDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                          @RequestBody @Valid ItemDto itemDto) {
+                          @RequestBody ItemDto itemDto) {
         return itemService.add(userId, itemDto);
     }
 

@@ -5,8 +5,6 @@ import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Builder
 @AllArgsConstructor
@@ -20,13 +18,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    @NotBlank
     private String name;
-    @NotBlank
     private String description;
-    @NotNull
     private Boolean available;
-    @NotNull
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
