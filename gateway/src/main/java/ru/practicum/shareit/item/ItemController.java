@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,6 +40,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> search(@RequestParam("text") String text) {
+        if (text == null || text.equals("")){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
         return itemClient.search(text);
     }
 
